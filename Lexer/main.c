@@ -41,5 +41,6 @@ int main(int argc, char *argv[]) {
     }
 
     fclose(fptr);
+    free(buffer);
     return EXIT_SUCCESS;
 }
