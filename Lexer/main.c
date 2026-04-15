@@ -1,8 +1,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int main(int argc, char *argv[]) {
+typedef enum {
+    START, 
+    VALID_OPERATOR,
+    VALID_IDENTIFIER, 
+    VALID_NUMBER,
+    TOKEN_COMPLETE, 
+    TOKEN_ERROR,
+} DFA; 
 
+int main(int argc, char *argv[]) {
     // Check arguments
     if (argc != 2){
         printf("Invalid number of arguments\n");
@@ -17,12 +25,11 @@ int main(int argc, char *argv[]) {
         return EXIT_FAILURE;
     }
     printf("File successfuly opened!\n");
-    
     // Get file size
     fseek(fptr, 0, SEEK_END);
     long size = ftell(fptr);
     rewind(fptr);
-
+    
     // Allocate buffer size
     char *buffer = malloc(size + 1);
     if (buffer == NULL){
@@ -32,11 +39,13 @@ int main(int argc, char *argv[]) {
 
     // Read into buffer
     fread(buffer, 1, size, fptr);
+   
     buffer[size] = '\0';
     
-    char *current = buffer;
+    char *current = buffer; 
+
     while (*current != '\0'){
-        printf("%c", *current);
+        printf("%c\n", *current);
         current++; 
     }
 
