@@ -1,1 +1,2 @@
-+ 123 hans int while;
+int x = 5;
+char name = Hans;

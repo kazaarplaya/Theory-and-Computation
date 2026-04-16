@@ -31,8 +31,10 @@ const char* type_to_string(TokenType t){
 };
 
 const char* keywords[] = {"int", "char", "if", "else", "while", "for", "do", "return"};
+const char* delimiters = ";,(){}[]";
 size_t length = sizeof(keywords) / sizeof(keywords[0]);
 
+// helper functions
 bool check_keyword(char *string){
     for(size_t i = 0; i < length; i++){
         if(strcmp(keywords[i], string) == 0){
@@ -40,6 +42,10 @@ bool check_keyword(char *string){
         }
     }
     return false;
+} 
+
+bool check_delimiter(char c){
+    return strchr(delimiters, c) != NULL;
 } 
 
 char* create_string_buffer(FILE* fptr){
@@ -70,19 +76,9 @@ Token get_next_token(char **current){
     while (isspace((unsigned char)**current)){
         (*current)++;
     }
-    
-    // delimiter
-    if (**current == ';') {
-        // printf("%c", **current);
-        token.lexeme[0] = **current;
-        token.lexeme[1] = '\0';
-        token.type = DELIMITER;
-        (*current)++;
-        return token;
-    };
 
     // operators
-    if (strchr("+-/*", **current)) {
+    if (strchr("+-/*=", **current)) {
         // printf("%c", **current);
         token.lexeme[0] = **current;
         token.lexeme[1] = '\0';
@@ -125,6 +121,16 @@ Token get_next_token(char **current){
         
         return token;
     }
+
+    // delimiter
+    if (check_delimiter(**current)) {
+        // printf("%c", **current);
+        token.lexeme[0] = **current;
+        token.lexeme[1] = '\0';
+        token.type = DELIMITER;
+        (*current)++;
+        return token;
+    };
     
 };
 
