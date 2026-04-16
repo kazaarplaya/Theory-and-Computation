@@ -11,6 +11,7 @@ typedef enum {
     DELIMITER,
     OPERATOR,
     ERROR, 
+    EOF_TOKEN,
 } TokenType; 
 
 typedef struct {
@@ -27,6 +28,8 @@ const char* type_to_string(TokenType t){
         case DELIMITER: return "DELIMITER";
         case INTEGER: return "INTEGER";
         case OPERATOR: return "OPERATOR";
+        case EOF_TOKEN: return "EOF";
+        case ERROR: return "ERROR";
     }
 };
 
@@ -35,7 +38,7 @@ const char* delimiters = ";,(){}[]";
 size_t length = sizeof(keywords) / sizeof(keywords[0]);
 
 // helper functions
-bool check_keyword(char *string){
+bool is_keyword(char *string){
     for(size_t i = 0; i < length; i++){
         if(strcmp(keywords[i], string) == 0){
             return true;
@@ -44,8 +47,11 @@ bool check_keyword(char *string){
     return false;
 } 
 
-bool check_delimiter(char c){
-    return strchr(delimiters, c) != NULL;
+bool is_delimiter(char c){
+    if (strchr(delimiters, c) != NULL){
+        return true;
+    }
+    return false;
 } 
 
 char* create_string_buffer(FILE* fptr){
@@ -63,18 +69,27 @@ char* create_string_buffer(FILE* fptr){
     }
 
     // Read into buffer
-    fread(buffer, 1, size, fptr);
-    buffer[size] = '\0';
+    size_t bytes_read = fread(buffer, 1, size, fptr);
+    buffer[bytes_read] = '\0';
 
-    return buffer;
+    return buffer; 
 };
 
 Token get_next_token(char **current){
     Token token;
+
+    
     
     // skip whitespaces
     while (isspace((unsigned char)**current)){
         (*current)++;
+    }
+
+    printf("DEBUG: '%c' (%d)\n", **current, (unsigned char)**current);
+    if (**current == '\0') {
+        token.lexeme[0] = '\0';
+        token.type = EOF_TOKEN;
+        return token;
     }
 
     // operators
@@ -113,7 +128,7 @@ Token get_next_token(char **current){
         token.lexeme[i] = '\0';
         
         // printf("%s", token.lexeme);
-        if(check_keyword(token.lexeme)){
+        if(is_keyword(token.lexeme)){
             token.type = KEYWORD;
         } else {
             token.type = IDENTIFIER;
@@ -123,7 +138,7 @@ Token get_next_token(char **current){
     }
 
     // delimiter
-    if (check_delimiter(**current)) {
+    if (is_delimiter(**current)) {
         // printf("%c", **current);
         token.lexeme[0] = **current;
         token.lexeme[1] = '\0';
@@ -153,8 +168,15 @@ int main(int argc, char *argv[]) {
     char *source = create_string_buffer(fptr); 
     char *current = source;
     
-    while (*current != '\0'){
+    printf("%s\n\n", current);
+
+    while (1){
         Token curr = get_next_token(&current);
+
+        if (curr.type == EOF_TOKEN){
+            break;
+        }
+
         printf("%s %s\n", type_to_string(curr.type), curr.lexeme);
     }
 
