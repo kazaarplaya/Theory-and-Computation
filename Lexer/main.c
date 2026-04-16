@@ -18,6 +18,15 @@ typedef struct {
     int column;
 } Token;
 
+const char* type_to_string(TokenType t){
+    switch (t){
+        case IDENTIFIER: return "IDENTIFIER";
+        case KEYWORD: return "KEYWORD";
+        case DELIMITER: return "DELIMITER";
+        case INTEGER: return "INTEGER";
+    }
+};
+
 char* create_string_buffer(FILE* fptr){
 
     // Get file size
@@ -41,7 +50,27 @@ char* create_string_buffer(FILE* fptr){
 
 Token get_next_token(char **current){
     Token token;
+    
+    // skip whitespaces
+    while (isspace((unsigned char)**current)){
+        (*current)++;
+    }
 
+    // integers
+    if (isdigit(**current)){
+        int i = 0;
+        while(isdigit(**current)){
+            token.lexeme[i] = **current;
+            printf("%c\n", **current);
+            (*current)++;
+            i++; 
+        }
+        token.lexeme[i] = '\0';
+        token.type = INTEGER;
+        return token;
+    }
+
+    // identifiers
     if (isalpha(**current)){
         int i = 0;
         while(isalpha(**current)){
@@ -52,9 +81,9 @@ Token get_next_token(char **current){
         }
         token.lexeme[i] = '\0';
         token.type = IDENTIFIER;
-        printf("%s", token.lexeme);
+        return token;
     }
-    return token;
+    
 };
 
 int main(int argc, char *argv[]) {
@@ -77,7 +106,8 @@ int main(int argc, char *argv[]) {
     char *current = source;
     
     while (*current != '\0'){
-        get_next_token(&current);
+        Token curr = get_next_token(&current);
+        printf("%s %s\n", type_to_string(curr.type), curr.lexeme);
     }
 
     fclose(fptr);
