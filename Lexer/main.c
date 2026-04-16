@@ -2,12 +2,14 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <stdbool.h>
 
 typedef enum {
     KEYWORD,
     IDENTIFIER,
     INTEGER, 
     DELIMITER,
+    OPERATOR,
     ERROR, 
 } TokenType; 
 
@@ -24,8 +26,21 @@ const char* type_to_string(TokenType t){
         case KEYWORD: return "KEYWORD";
         case DELIMITER: return "DELIMITER";
         case INTEGER: return "INTEGER";
+        case OPERATOR: return "OPERATOR";
     }
 };
+
+const char* keywords[] = {"int", "char", "if", "else", "while", "for", "do", "return"};
+size_t length = sizeof(keywords) / sizeof(keywords[0]);
+
+bool check_keyword(char *string){
+    for(size_t i = 0; i < length; i++){
+        if(strcmp(keywords[i], string) == 0){
+            return true;
+        }
+    }
+    return false;
+} 
 
 char* create_string_buffer(FILE* fptr){
 
@@ -55,13 +70,33 @@ Token get_next_token(char **current){
     while (isspace((unsigned char)**current)){
         (*current)++;
     }
+    
+    // delimiter
+    if (**current == ';') {
+        // printf("%c", **current);
+        token.lexeme[0] = **current;
+        token.lexeme[1] = '\0';
+        token.type = DELIMITER;
+        (*current)++;
+        return token;
+    };
+
+    // operators
+    if (strchr("+-/*", **current)) {
+        // printf("%c", **current);
+        token.lexeme[0] = **current;
+        token.lexeme[1] = '\0';
+        token.type = OPERATOR;
+        (*current)++;
+        return token;
+    };
 
     // integers
     if (isdigit(**current)){
         int i = 0;
         while(isdigit(**current)){
             token.lexeme[i] = **current;
-            printf("%c\n", **current);
+            // printf("%c\n", **current);
             (*current)++;
             i++; 
         }
@@ -70,17 +105,24 @@ Token get_next_token(char **current){
         return token;
     }
 
-    // identifiers
+    // identifier / keyword
     if (isalpha(**current)){
         int i = 0;
         while(isalpha(**current)){
             token.lexeme[i] = **current;
-            printf("%c\n", **current);
+            // printf("%c\n", **current);
             (*current)++;
             i++; 
         }
         token.lexeme[i] = '\0';
-        token.type = IDENTIFIER;
+        
+        // printf("%s", token.lexeme);
+        if(check_keyword(token.lexeme)){
+            token.type = KEYWORD;
+        } else {
+            token.type = IDENTIFIER;
+        }
+        
         return token;
     }
     
