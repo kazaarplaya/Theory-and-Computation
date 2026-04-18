@@ -112,22 +112,31 @@ Token get_next_token(char **current){
 
     // integers
     if (isdigit(**current)){
+        bool has_error = false;
         int i = 0;
-        while(isdigit(**current)){
+        while(**current != '\0' && !isspace(**current) && !is_delimiter(**current)){
+            if (!isdigit(**current)){
+                has_error = true;
+            }
+
             token.lexeme[i] = **current;
             // printf("%c\n", **current);
             (*current)++;
             i++; 
         }
         token.lexeme[i] = '\0';
-        token.type = INTEGER;
+
+        if (has_error){
+            token.type = ERROR;
+        } else {
+            token.type = INTEGER;
+        }
         return token;
     }
 
     // identifier / keyword
-    if (isalnum(**current)){
+    if (isalpha(**current)){
         bool has_error = false;
-
         int i = 0;
         while(**current != '\0' && !isspace(**current) && !is_delimiter(**current)){
             if (!isalpha(**current)){

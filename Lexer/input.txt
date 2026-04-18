@@ -1,2 +1,2 @@
-in@t x = 523;
+in@t x = 5@23;
 char name;
