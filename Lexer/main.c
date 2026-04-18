@@ -167,6 +167,9 @@ int main(int argc, char *argv[]) {
     
     char *source = create_string_buffer(fptr); 
     char *current = source;
+
+    FILE *outputfptr;
+    outputfptr = fopen("output.txt", "w");
     
     printf("%s\n\n", current);
 
@@ -177,10 +180,11 @@ int main(int argc, char *argv[]) {
             break;
         }
 
-        printf("%s %s\n", type_to_string(curr.type), curr.lexeme);
+        fprintf(outputfptr, "%s %s\n", type_to_string(curr.type), curr.lexeme);
     }
 
     fclose(fptr);
+    fclose(outputfptr);
     free(source);
     return EXIT_SUCCESS;
 }
