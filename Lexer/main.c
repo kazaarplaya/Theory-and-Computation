@@ -78,8 +78,6 @@ char* create_string_buffer(FILE* fptr){
 Token get_next_token(char **current){
     Token token;
 
-    
-    
     // skip whitespaces
     while (isspace((unsigned char)**current)){
         (*current)++;
@@ -92,6 +90,16 @@ Token get_next_token(char **current){
         return token;
     }
 
+    // delimiter
+    if (is_delimiter(**current)) {
+        // printf("%c", **current);
+        token.lexeme[0] = **current;
+        token.lexeme[1] = '\0';
+        token.type = DELIMITER;
+        (*current)++;
+        return token;
+    };
+    
     // operators
     if (strchr("+-/*=", **current)) {
         // printf("%c", **current);
@@ -117,9 +125,15 @@ Token get_next_token(char **current){
     }
 
     // identifier / keyword
-    if (isalpha(**current)){
+    if (isalnum(**current)){
+        bool has_error = false;
+
         int i = 0;
-        while(isalpha(**current)){
+        while(**current != '\0' && !isspace(**current) && !is_delimiter(**current)){
+            if (!isalpha(**current)){
+                has_error = true;
+            }
+            
             token.lexeme[i] = **current;
             // printf("%c\n", **current);
             (*current)++;
@@ -128,24 +142,20 @@ Token get_next_token(char **current){
         token.lexeme[i] = '\0';
         
         // printf("%s", token.lexeme);
-        if(is_keyword(token.lexeme)){
-            token.type = KEYWORD;
-        } else {
+
+        if (has_error){
+            token.type = ERROR;
+        } else if (is_keyword(token.lexeme)){
+             token.type = KEYWORD;
+        } else{
             token.type = IDENTIFIER;
         }
         
         return token;
     }
 
-    // delimiter
-    if (is_delimiter(**current)) {
-        // printf("%c", **current);
-        token.lexeme[0] = **current;
-        token.lexeme[1] = '\0';
-        token.type = DELIMITER;
-        (*current)++;
-        return token;
-    };
+    token.type = ERROR;
+    return token;
     
 };
 
@@ -165,9 +175,11 @@ int main(int argc, char *argv[]) {
     }
     printf("File successfuly opened!\n");
     
+    // buffer pointers 
     char *source = create_string_buffer(fptr); 
     char *current = source;
 
+    // output file
     FILE *outputfptr;
     outputfptr = fopen("output.txt", "w");
     
