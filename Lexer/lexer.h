@@ -18,7 +18,6 @@ typedef struct {
     int column;
 } Token;
 
-
 Token get_next_token(char **current);
 const char* type_to_string(TokenType t);
 
