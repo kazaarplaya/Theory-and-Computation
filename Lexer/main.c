@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include "lexer.c"
+#include "lexer.h"
+
 
 char* create_string_buffer(FILE* fptr){
 
@@ -40,28 +41,25 @@ int main(int argc, char *argv[]) {
     printf("File successfuly opened!\n");
     
     // buffer pointers 
-    char *source = create_string_buffer(fptr); 
-    char *current = source;
+    // char *source = create_string_buffer(fptr); 
+    // char *current = source;
 
     // output file
     FILE *outputfptr;
     outputfptr = fopen("output.txt", "w");
     
-    printf("%s\n\n", current);
+    // printf("%s\n\n", current);
 
-    while (1){
-        Token curr = get_next_token(&current);
+    Lexer lexer = initialiseLexer(create_string_buffer(fptr));
 
-        if (curr.type == EOF_TOKEN){
-            break;
-        }
-
-        fprintf(outputfptr, "%s %s\n", type_to_string(curr.type), curr.lexeme);
-    }
+    Token curr;
+    do {
+        curr = tokenize(&lexer);
+        fprintf(outputfptr, "%s %s\n", tokentoString(curr.type), curr.lexeme);     
+    } while (curr.type != EOF_TOKEN);
 
     // free memory and pointers
     fclose(fptr);
     fclose(outputfptr);
-    free(source);
     return EXIT_SUCCESS;
 }

@@ -1,5 +1,6 @@
 #ifndef LEXER_H
 #define LEXER_H
+#include <stddef.h>
 
 typedef enum {
     KEYWORD,
@@ -18,7 +19,18 @@ typedef struct {
     int column;
 } Token;
 
-Token get_next_token(char **current);
-const char* type_to_string(TokenType t);
+typedef struct {
+    const char* source;
+    char ch;
+    size_t currentPosition; 
+    size_t nextPosition;
+    int inputLength;
+    int line;
+    int column;
+} Lexer;
+
+Lexer initialiseLexer(const char* input);
+Token tokenize(Lexer *l);
+const char* tokentoString(TokenType t);
 
 #endif

@@ -2,13 +2,39 @@
 #include <ctype.h>
 #include <string.h>
 #include <stdbool.h>
+#include <stddef.h>
+
 
 static const char* keywords[] = {"int", "char", "if", "else", "while", "for", "do", "return"};
 static const char* delimiters = ";,(){}[]";
 static size_t length = sizeof(keywords) / sizeof(keywords[0]);
 
+static void advanceChar(Lexer *l){
+    // if end, terminate
+    if (l->currentPosition >= l->inputLength){
+        l->ch = '\0';
+    } else {
+        l->ch = l->source[l->nextPosition];
+    }
+
+    l->currentPosition = l->nextPosition;
+    l->nextPosition++;
+}
+
+Lexer initialiseLexer(const char* input){
+    Lexer l;
+    l.source = input;
+    l.inputLength = strlen(input);
+    l.ch = '\0';
+    l.currentPosition = 0;
+    l.nextPosition = 0;
+    l.line = 1;
+    advanceChar(&l);
+    return l;
+}
+
 // helper functions
-static bool is_keyword(char *string){
+static bool isKeyword(char *string){
     for(size_t i = 0; i < length; i++){
         if(strcmp(keywords[i], string) == 0){
             return true;
@@ -17,14 +43,14 @@ static bool is_keyword(char *string){
     return false;
 } 
 
-static bool is_delimiter(char c){
+static bool isDelimiter(char c){
     if (strchr(delimiters, c) != NULL){
         return true;
     }
     return false;
 } 
 
-const char* type_to_string(TokenType t){
+const char* tokentoString(TokenType t){
     switch (t){
         case IDENTIFIER: return "IDENTIFIER";
         case KEYWORD: return "KEYWORD";
@@ -36,50 +62,49 @@ const char* type_to_string(TokenType t){
     }
 };
 
-Token get_next_token(char **current){
+Token tokenize(Lexer *l){
     Token token;
 
     // skip whitespaces
-    while (isspace((unsigned char)**current)){
-        (*current)++;
+    while (isspace(l->ch)){
+        advanceChar(l);
     }
-    printf("DEBUG: '%c' (%d)\n", **current, (unsigned char)**current);
 
-    if (**current == '\0') {
+    if (l->ch == '\0') {
         token.lexeme[0] = '\0';
         token.type = EOF_TOKEN;
         return token;
     }
 
     // delimiter
-    if (is_delimiter(**current)) {
-        token.lexeme[0] = **current;
+    if (isDelimiter(l->ch)) {
+        token.lexeme[0] = l->ch;
         token.lexeme[1] = '\0';
         token.type = DELIMITER;
-        (*current)++;
+        advanceChar(l);
         return token;
     };
     
     // operators
-    if (strchr("+-/*=", **current)) {
-        token.lexeme[0] = **current;
+    if (strchr("+-/*=", l->ch)) {
+        token.lexeme[0] = l->ch;
         token.lexeme[1] = '\0';
         token.type = OPERATOR;
-        (*current)++;
+        advanceChar(l);
         return token;
     };  
 
     // integers
-    if (isdigit(**current)){
+    if (isdigit(l->ch)){
         bool has_error = false;
         int i = 0;
-        while(**current != '\0' && !isspace(**current) && !is_delimiter(**current)){
-            if (!isdigit(**current)){
+        while(l->ch != '\0' && !isspace(l->ch) && !isDelimiter(l->ch)){
+            if (!isdigit(l->ch)){
                 has_error = true;
             }
 
-            token.lexeme[i] = **current;
-            (*current)++;
+            token.lexeme[i] = l->ch;
+            advanceChar(l);
             i++; 
         }
         token.lexeme[i] = '\0';
@@ -93,23 +118,23 @@ Token get_next_token(char **current){
     }
 
     // identifier / keyword
-    if (isalpha(**current)){
+    if (isalpha(l->ch)){
         bool has_error = false;
         int i = 0;
-        while(**current != '\0' && !isspace(**current) && !is_delimiter(**current)){
-            if (!isalpha(**current)){
+        while(l->ch != '\0' && !isspace(l->ch) && !isDelimiter(l->ch)){
+            if (!isalpha(l->ch)){
                 has_error = true;
             }
             
-            token.lexeme[i] = **current;
-            (*current)++;
+            token.lexeme[i] = l->ch;
+            advanceChar(l);
             i++; 
         }
         token.lexeme[i] = '\0';
 
         if (has_error){
             token.type = ERROR;
-        } else if (is_keyword(token.lexeme)){
+        } else if (isKeyword(token.lexeme)){
              token.type = KEYWORD;
         } else {
             token.type = IDENTIFIER;
