@@ -40,18 +40,11 @@ int main(int argc, char *argv[]) {
     }
     printf("File successfuly opened!\n");
     
-    // buffer pointers 
-    // char *source = create_string_buffer(fptr); 
-    // char *current = source;
-
     // output file
     FILE *outputfptr;
     outputfptr = fopen("output.txt", "w");
-    
-    // printf("%s\n\n", current);
 
     Lexer lexer = initialiseLexer(create_string_buffer(fptr));
-
     Token curr;
     do {
         curr = tokenize(&lexer);

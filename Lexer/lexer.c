@@ -7,6 +7,7 @@
 
 static const char* keywords[] = {"int", "char", "if", "else", "while", "for", "do", "return"};
 static const char* delimiters = ";,(){}[]";
+static const char* operators = "+-/*=";
 static size_t length = sizeof(keywords) / sizeof(keywords[0]);
 
 static void advanceChar(Lexer *l){
@@ -34,6 +35,13 @@ Lexer initialiseLexer(const char* input){
 }
 
 // helper functions
+static bool isOperator(char c){
+    if (strchr(operators, c) != NULL){
+        return true;
+    }
+    return false;
+}
+
 static bool isKeyword(char *string){
     for(size_t i = 0; i < length; i++){
         if(strcmp(keywords[i], string) == 0){
@@ -62,87 +70,80 @@ const char* tokentoString(TokenType t){
     }
 };
 
+Token createToken(Lexer *l, TokenType type, size_t start){
+    Token token;
+    token.type = type;
+    size_t length = l->currentPosition - start;
+    strncpy(token.lexeme, l->source + start, length);
+    token.lexeme[length] = '\0';
+    return token;
+};
+
 Token tokenize(Lexer *l){
     Token token;
-
+    
     // skip whitespaces
     while (isspace(l->ch)){
         advanceChar(l);
     }
 
+    // eof
     if (l->ch == '\0') {
-        token.lexeme[0] = '\0';
-        token.type = EOF_TOKEN;
-        return token;
+        size_t start = l->currentPosition;
+        return createToken(l, EOF_TOKEN, start);
     }
 
     // delimiter
     if (isDelimiter(l->ch)) {
-        token.lexeme[0] = l->ch;
-        token.lexeme[1] = '\0';
-        token.type = DELIMITER;
+        size_t start = l->currentPosition;
         advanceChar(l);
-        return token;
+        return createToken(l, DELIMITER, start);
     };
     
     // operators
-    if (strchr("+-/*=", l->ch)) {
-        token.lexeme[0] = l->ch;
-        token.lexeme[1] = '\0';
-        token.type = OPERATOR;
+    if (isOperator(l->ch)) {
+        size_t start = l->currentPosition;
         advanceChar(l);
-        return token;
+        return createToken(l, OPERATOR, start);
     };  
 
     // integers
     if (isdigit(l->ch)){
+        size_t start = l->currentPosition; 
         bool has_error = false;
-        int i = 0;
-        while(l->ch != '\0' && !isspace(l->ch) && !isDelimiter(l->ch)){
+        while(!isspace(l->ch) && !isDelimiter(l->ch)){
             if (!isdigit(l->ch)){
                 has_error = true;
             }
-
-            token.lexeme[i] = l->ch;
             advanceChar(l);
-            i++; 
         }
-        token.lexeme[i] = '\0';
 
         if (has_error){
-            token.type = ERROR;
+            token = createToken(l, ERROR, start);
         } else {        
-            token.type = INTEGER;
-        }       
+            token = createToken(l, INTEGER, start);
+        }
         return token;
     }
 
     // identifier / keyword
     if (isalpha(l->ch)){
         bool has_error = false;
-        int i = 0;
-        while(l->ch != '\0' && !isspace(l->ch) && !isDelimiter(l->ch)){
+        size_t start = l->currentPosition;
+        while(!isspace(l->ch) && !isDelimiter(l->ch)){
             if (!isalpha(l->ch)){
                 has_error = true;
             }
-            
-            token.lexeme[i] = l->ch;
             advanceChar(l);
-            i++; 
         }
-        token.lexeme[i] = '\0';
 
-        if (has_error){
+        token = createToken(l, IDENTIFIER, start);
+
+        if (has_error) {
             token.type = ERROR;
-        } else if (isKeyword(token.lexeme)){
-             token.type = KEYWORD;
-        } else {
-            token.type = IDENTIFIER;
+        } else if (isKeyword(token.lexeme)) {
+            token.type = KEYWORD;
         }
-        
         return token;
     }
-
-    token.type = ERROR;
-    return token;
 };
