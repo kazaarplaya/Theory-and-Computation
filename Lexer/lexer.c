@@ -80,7 +80,6 @@ Token createToken(Lexer *l, TokenType type, size_t start){
 };
 
 Token tokenize(Lexer *l){
-    Token token;
     
     // skip whitespaces
     while (isspace(l->ch)){
@@ -118,6 +117,7 @@ Token tokenize(Lexer *l){
             advanceChar(l);
         }
 
+        Token token;
         if (has_error){
             token = createToken(l, ERROR, start);
         } else {        
@@ -127,22 +127,23 @@ Token tokenize(Lexer *l){
     }
 
     // identifier / keyword
-    if (isalpha(l->ch)){
+    if (isalpha(l->ch) || l->ch == '_'){
         bool has_error = false;
         size_t start = l->currentPosition;
-        while(!isspace(l->ch) && !isDelimiter(l->ch)){
-            if (!isalpha(l->ch)){
+        while((!isspace(l->ch) && !isDelimiter(l->ch)) || l->ch == '_'){
+            if (!isalpha(l->ch) && l->ch != '_'){
                 has_error = true;
             }
             advanceChar(l);
         }
 
+        Token token;
         token = createToken(l, IDENTIFIER, start);
-
+        
         if (has_error) {
-            token.type = ERROR;
+            token = createToken(l, ERROR, start);
         } else if (isKeyword(token.lexeme)) {
-            token.type = KEYWORD;
+            token = createToken(l, KEYWORD, start);
         }
         return token;
     }

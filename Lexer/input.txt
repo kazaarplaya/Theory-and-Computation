@@ -1,3 +1,2 @@
-in@t x = 5@23;
-int x = 5;
+int __name = 5;
 char name;
