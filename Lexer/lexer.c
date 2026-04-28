@@ -147,4 +147,7 @@ Token tokenize(Lexer *l){
         }
         return token;
     }
-};
+    
+    Token token = createToken(l, ERROR, l->currentPosition);
+    return token;
+}
