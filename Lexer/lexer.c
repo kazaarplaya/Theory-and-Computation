@@ -8,7 +8,6 @@
 static const char* keywords[] = {"int", "char", "if", "else", "while", "for", "do", "return"};
 static const char* delimiters = ";,(){}[]";
 static const char* operators = "+-/*=";
-static size_t length = sizeof(keywords) / sizeof(keywords[0]);
 
 static void advanceChar(Lexer *l){
     // if end, terminate
@@ -43,6 +42,7 @@ static bool isOperator(char c){
 }
 
 static bool isKeyword(char *string){
+    size_t length = sizeof(keywords) / sizeof(keywords[0]);
     for(size_t i = 0; i < length; i++){
         if(strcmp(keywords[i], string) == 0){
             return true;
@@ -93,21 +93,21 @@ Token tokenize(Lexer *l){
     }
 
     // delimiter
-    if (isDelimiter(l->ch)) {
+    else if (isDelimiter(l->ch)) {
         size_t start = l->currentPosition;
         advanceChar(l);
         return createToken(l, DELIMITER, start);
-    };
+    }
     
     // operators
-    if (isOperator(l->ch)) {
+    else if (isOperator(l->ch)) {
         size_t start = l->currentPosition;
         advanceChar(l);
         return createToken(l, OPERATOR, start);
-    };  
+    }
 
     // integers
-    if (isdigit(l->ch)){
+    else if (isdigit(l->ch)){
         size_t start = l->currentPosition; 
         bool has_error = false;
         while(!isspace(l->ch) && !isDelimiter(l->ch)){
@@ -127,7 +127,7 @@ Token tokenize(Lexer *l){
     }
 
     // identifier / keyword
-    if (isalpha(l->ch) || l->ch == '_'){
+    else if (isalpha(l->ch) || l->ch == '_'){
         bool has_error = false;
         size_t start = l->currentPosition;
         while((!isspace(l->ch) && !isDelimiter(l->ch)) || l->ch == '_'){
@@ -147,7 +147,9 @@ Token tokenize(Lexer *l){
         }
         return token;
     }
-    
-    Token token = createToken(l, ERROR, l->currentPosition);
-    return token;
+
+    else {
+        Token token = createToken(l, ERROR, l->currentPosition);
+        return token;
+    }
 }
