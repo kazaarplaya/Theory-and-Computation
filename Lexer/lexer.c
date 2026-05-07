@@ -91,7 +91,7 @@ Lexer initialise_lexer(const char* input){
     l.currentPosition = 0;
     l.nextPosition = 0;
     l.line = 1;
-    l.column = 0;
+    l.column = -1;
     
     advance_char(&l);
     return l;
