@@ -1,8 +1,11 @@
-KEYWORD int
-IDENTIFIER x
-OPERATOR =
-INTEGER 5
-OPERATOR +
-INTEGER 10
-DELIMITER ;
-EOF 
+KEYWORD      int                  line=1    column=4   
+IDENTIFIER   x                    line=1    column=6   
+OPERATOR     =                    line=1    column=8   
+INTEGER      10                   line=1    column=11  
+DELIMITER    ;                    line=1    column=12  
+KEYWORD      char                 line=2    column=5   
+IDENTIFIER   y                    line=2    column=7   
+OPERATOR     =                    line=2    column=9   
+INTEGER      20                   line=2    column=12  
+DELIMITER    ;                    line=2    column=13  
+EOF                               line=2    column=13  

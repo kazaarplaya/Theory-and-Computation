@@ -1,1 +1,2 @@
-int x=5+10;
+int x = 10;
+char y = 20;

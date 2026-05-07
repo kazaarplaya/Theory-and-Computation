@@ -7,7 +7,7 @@
 
 static const char* keywords[] = {"int", "char", "if", "else", "while", "for", "do", "return"};
 static const char* delimiters = ";,(){}[]";
-static const char* operators = "+-/*=";
+static const char* operators = "+-/%*=";
 
 /* Character Helpers */
 static bool is_operator(char c){
@@ -51,6 +51,8 @@ const char* token_type_to_string(TokenType t){
 Token create_token(Lexer *l, TokenType type, size_t start){
     Token token;
     token.type = type;
+    token.line = l->line;
+    token.column = l->column;
     
     size_t length = l->currentPosition - start;
     strncpy(token.lexeme, l->source + start, length);
@@ -60,6 +62,15 @@ Token create_token(Lexer *l, TokenType type, size_t start){
 
 /* Lexer Initialisation and Lexer Movement */
 static void advance_char(Lexer *l){
+
+    // advance line and column
+    if (l->ch == '\n') {
+        l->line++; 
+        l->column = 1;
+    } else {
+        l->column++;
+    }
+
     // if end, terminate
     if (l->currentPosition >= l->inputLength){
         l->ch = '\0';
@@ -80,6 +91,7 @@ Lexer initialise_lexer(const char* input){
     l.currentPosition = 0;
     l.nextPosition = 0;
     l.line = 1;
+    l.column = 0;
     
     advance_char(&l);
     return l;

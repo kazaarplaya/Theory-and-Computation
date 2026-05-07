@@ -48,7 +48,11 @@ int main(int argc, char *argv[]) {
     Token curr;
     do {
         curr = tokenize(&lexer);
-        fprintf(outputfptr, "%s %s\n", token_type_to_string(curr.type), curr.lexeme);     
+        fprintf(outputfptr, "%-12s %-20s line=%-4d column=%-4d\n",
+            token_type_to_string(curr.type),
+            curr.lexeme,
+            curr.line,
+            curr.column);     
     } while (curr.type != EOF_TOKEN);
 
     // free memory and pointers
