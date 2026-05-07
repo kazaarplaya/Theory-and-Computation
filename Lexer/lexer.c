@@ -71,7 +71,7 @@ static void advance_char(Lexer *l){
         l->column++;
     }
 
-    // if end, terminate
+    // move pointer 
     if (l->currentPosition >= l->inputLength){
         l->ch = '\0';
     } else {
@@ -132,41 +132,40 @@ Token tokenize(Lexer *l){
     else if (isdigit(l->ch)){
         size_t start = l->currentPosition; 
         bool has_error = false;
-        while(!isspace(l->ch) && !is_delimiter(l->ch) && !is_operator(l->ch)){
-            if (!isdigit(l->ch)){
-                has_error = true;
-            }
+
+        // consume valid digit 
+        while(isdigit(l->ch)){
             advance_char(l);
         }
+        
+        // check if error
+        if (isalpha(l->ch) || l->ch == '_'){
+            has_error = true;
 
-        Token token;
-        if (has_error){
-            token = create_token(l, ERROR, start);
-        } else {        
-            token = create_token(l, INTEGER, start);
+            while(isalpha(l->ch) || l->ch == '_'){
+                advance_char(l);
+            }
         }
-        return token;
+
+        if (has_error){
+            return create_token(l, ERROR, start);
+        }
+        return create_token(l, INTEGER, start);
     }
 
     // identifier / keyword
     else if (isalpha(l->ch) || l->ch == '_'){
         bool has_error = false;
         size_t start = l->currentPosition;
-        while((!isspace(l->ch) && !is_delimiter(l->ch)) && !is_operator(l->ch) || l->ch == '_'){
-            if (!isalnum(l->ch) && l->ch != '_'){
-                has_error = true;
-            }
+
+        while(isalnum(l->ch) || l->ch == '_'){
             advance_char(l);
         }
-
-        Token token;
-        token = create_token(l, IDENTIFIER, start);
         
-        if (has_error) {
-            token = create_token(l, ERROR, start);
-        } else if (is_keyword(token.lexeme)) {
-            token = create_token(l, KEYWORD, start);
-        }
+        Token token = create_token(l, IDENTIFIER, start);
+        if (is_keyword(token.lexeme)) {
+            return create_token(l, KEYWORD, start);
+        } 
         return token;
     }
 

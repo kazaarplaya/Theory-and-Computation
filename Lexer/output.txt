@@ -1,12 +1,10 @@
 ERROR        @                    line=1    column=1   
-KEYWORD      int                  line=1    column=4   
-IDENTIFIER   x                    line=1    column=6   
-OPERATOR     =                    line=1    column=7   
-INTEGER      10                   line=1    column=9   
-DELIMITER    ;                    line=1    column=10  
-KEYWORD      char                 line=2    column=5   
-IDENTIFIER   y                    line=2    column=7   
-OPERATOR     =                    line=2    column=9   
-INTEGER      20                   line=2    column=12  
-DELIMITER    ;                    line=2    column=13  
-EOF                               line=2    column=13  
+IDENTIFIER   i_nt                 line=1    column=6   
+IDENTIFIER   x                    line=1    column=8   
+OPERATOR     =                    line=1    column=9   
+ERROR        10a                  line=1    column=12  
+DELIMITER    ;                    line=1    column=13  
+KEYWORD      int                  line=2    column=4   
+IDENTIFIER   nam1e                line=2    column=10  
+DELIMITER    ;                    line=2    column=11  
+EOF                               line=2    column=11  

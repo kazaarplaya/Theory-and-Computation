@@ -1,2 +1,2 @@
-@int x=10;
-char y = 20;
+@ i_nt x=10a;
+int nam1e;
