@@ -44,11 +44,11 @@ int main(int argc, char *argv[]) {
     FILE *outputfptr;
     outputfptr = fopen("output.txt", "w");
 
-    Lexer lexer = initialiseLexer(create_string_buffer(fptr));
+    Lexer lexer = initialise_lexer(create_string_buffer(fptr));
     Token curr;
     do {
         curr = tokenize(&lexer);
-        fprintf(outputfptr, "%s %s\n", tokentoString(curr.type), curr.lexeme);     
+        fprintf(outputfptr, "%s %s\n", token_type_to_string(curr.type), curr.lexeme);     
     } while (curr.type != EOF_TOKEN);
 
     // free memory and pointers

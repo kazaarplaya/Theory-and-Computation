@@ -13,8 +13,9 @@ typedef enum {
 } TokenType; 
 
 typedef struct {
-    char lexeme[64];
     TokenType type;
+    char lexeme[64];
+
     int line;
     int column;
 } Token;
@@ -22,15 +23,17 @@ typedef struct {
 typedef struct {
     const char* source;
     char ch;
+    int inputLength;
+
     size_t currentPosition; 
     size_t nextPosition;
-    int inputLength;
+    
     int line;
     int column;
 } Lexer;
 
-Lexer initialiseLexer(const char* input);
+Lexer initialise_lexer(const char* input);
 Token tokenize(Lexer *l);
-const char* tokentoString(TokenType t);
+const char* token_type_to_string(TokenType t);
 
 #endif
