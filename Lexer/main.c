@@ -5,12 +5,12 @@
 
 char* create_string_buffer(FILE* fptr){
 
-    // Get file size
+    // get file size
     fseek(fptr, 0, SEEK_END);
     long size = ftell(fptr);
     rewind(fptr);
     
-    // Allocate buffer size
+    // allocate buffer size
     char *buffer = malloc(size + 1);
     if (buffer == NULL){
         printf("Buffer Allocation Failed!\n");
@@ -25,7 +25,7 @@ char* create_string_buffer(FILE* fptr){
 };
 
 int main(int argc, char *argv[]) {
-    // Check arguments
+    // check arguments
     if (argc != 2){
         printf("Invalid number of arguments\n");
         return EXIT_FAILURE;
@@ -33,7 +33,7 @@ int main(int argc, char *argv[]) {
     
     FILE* fptr = fopen(argv[1], "r");
 
-    // Check if file could not be opened
+    // check if file could not be opened
     if (fptr == NULL){
         printf("File not found");
         return EXIT_FAILURE;

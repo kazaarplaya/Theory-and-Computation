@@ -67,6 +67,7 @@ const char* tokentoString(TokenType t){
         case OPERATOR: return "OPERATOR";
         case EOF_TOKEN: return "EOF";
         case ERROR: return "ERROR";
+        default: return "UNKNOWN";
     }
 };
 
@@ -130,8 +131,8 @@ Token tokenize(Lexer *l){
     else if (isalpha(l->ch) || l->ch == '_'){
         bool has_error = false;
         size_t start = l->currentPosition;
-        while((!isspace(l->ch) && !isDelimiter(l->ch)) || l->ch == '_'){
-            if (!isalpha(l->ch) && l->ch != '_'){
+        while((!isspace(l->ch) && !isDelimiter(l->ch)) && !isOperator(l->ch) || l->ch == '_'){
+            if (!isalnum(l->ch) && l->ch != '_'){
                 has_error = true;
             }
             advanceChar(l);
@@ -149,7 +150,9 @@ Token tokenize(Lexer *l){
     }
 
     else {
-        Token token = createToken(l, ERROR, l->currentPosition);
+        size_t start = l->currentPosition;
+        advanceChar(l);
+        Token token = createToken(l, ERROR, start);
         return token;
     }
 }

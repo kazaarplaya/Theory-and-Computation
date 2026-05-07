@@ -1,2 +1,1 @@
-int __name = 5;
-char name;
+int x=10;
