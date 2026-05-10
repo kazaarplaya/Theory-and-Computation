@@ -62,20 +62,20 @@ const char* token_type_to_string(TokenType t){
     }
 };
 
-static Token create_token(Lexer *l, TokenType type, size_t start){
+static Token create_token(Lexer *l, TokenType type, size_t start_position, int start_line, int start_col){
     Token token;
     token.type = type;
-    token.line = l->line;
-    token.column = l->column;
+    token.line = start_line;
+    token.column = start_col;
 
     // check if length is greater than defined max
-    size_t length = l->currentPosition - start;
+    size_t length = l->current_position - start_position;
     if (length >= MAX_LEXEME_LENGTH) {
         length = MAX_LEXEME_LENGTH - 1;
         token.type = TOKEN_ERROR;
     }
 
-    strncpy(token.lexeme, l->source + start, length);
+    strncpy(token.lexeme, l->source + start_position, length);
     token.lexeme[length] = '\0';
     return token;
 };
@@ -92,27 +92,27 @@ static void advance_char(Lexer *l){
     }
     
     // move pointer 
-    if (l->currentPosition >= l->inputLength){
+    if (l->current_position >= l->input_length){
         l->ch = '\0';
     } else {
-        l->ch = l->source[l->nextPosition];
+        l->ch = l->source[l->next_position];
     }
 
     // advance pointer by 1 position
-    l->currentPosition = l->nextPosition;
-    l->nextPosition++;
+    l->current_position = l->next_position;
+    l->next_position++;
 }
 
 Lexer initialise_lexer(const char* input){
     Lexer l;
     l.source = input;
-    l.inputLength = strlen(input);
+    l.input_length = strlen(input);
     l.ch = '\0';
 
-    l.currentPosition = 0;
-    l.nextPosition = 0;
+    l.current_position = 0;
+    l.next_position = 0;
     l.line = 1;
-    l.column = -1;
+    l.column = 0;
     
     advance_char(&l);
     return l;
@@ -143,22 +143,24 @@ Token tokenize(Lexer *l){
     }
 
     // start state
-    size_t start = l->currentPosition;
+    size_t start_position = l->current_position;
+    int start_line = l->line;
+    int start_column = l->column;
     LexerState state = get_start_state(l->ch);
     
     // tokenization logic
     switch(state) {
         case STATE_EOF:
             advance_char(l);
-            return create_token(l, TOKEN_EOF, start);
+            return create_token(l, TOKEN_EOF, start_position, start_line, start_column);
 
         case STATE_DELIMITER:
             advance_char(l);
-            return create_token(l, TOKEN_DELIMITER, start);
+            return create_token(l, TOKEN_DELIMITER, start_position, start_line, start_column);
 
         case STATE_OPERATOR:
             advance_char(l);
-            return create_token(l, TOKEN_OPERATOR, start);
+            return create_token(l, TOKEN_OPERATOR, start_position, start_line, start_column);
 
         case STATE_INTEGER:
             // consume valid digit 
@@ -168,27 +170,27 @@ Token tokenize(Lexer *l){
             
             // check if integer is invalid
             if (!isdigit(l->ch) || l->ch == '_'){
-                while(!is_delimiter(l->ch)){
+                while (l->ch != '\0' && !isspace(l->ch) && !is_delimiter(l->ch) && !is_operator(l->ch)) {
                     advance_char(l);
                 }
-                return create_token(l, TOKEN_ERROR, start);
+                return create_token(l, TOKEN_ERROR, start_position, start_line, start_column);
             }
-            return create_token(l, TOKEN_INTEGER, start);
+            return create_token(l, TOKEN_INTEGER, start_position, start_line, start_column);
 
         case STATE_IDENTIFIER:
             while(isalnum(l->ch) || l->ch == '_'){
                 advance_char(l);
             }
             
-            Token token = create_token(l, TOKEN_IDENTIFIER, start);
+            Token token = create_token(l, TOKEN_IDENTIFIER, start_position, start_line, start_column);
             if (is_keyword(token.lexeme)) {
-                return create_token(l, TOKEN_KEYWORD, start);
+                return create_token(l, TOKEN_KEYWORD, start_position, start_line, start_column);
             } 
             return token;
 
         case STATE_ERROR:
             default:
                 advance_char(l);
-                return create_token(l, TOKEN_ERROR, start);
+                return create_token(l, TOKEN_ERROR, start_position, start_line, start_column);
         };
 }

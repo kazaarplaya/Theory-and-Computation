@@ -32,12 +32,10 @@ typedef struct {
 
 typedef struct {
     const char* source;
+    size_t input_length;
+    size_t current_position; 
+    size_t next_position;
     char ch;
-    int inputLength;
-
-    size_t currentPosition; 
-    size_t nextPosition;
-    
     int line;
     int column;
 } Lexer;

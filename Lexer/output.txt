@@ -1,9 +1,9 @@
-ERROR        12@34                line=1    column=5   
+ERROR        12@34                line=1    column=1   
 DELIMITER    ;                    line=1    column=6   
-KEYWORD      int                  line=2    column=4   
-IDENTIFIER   nam                  line=2    column=8   
+KEYWORD      int                  line=2    column=1   
+IDENTIFIER   nam                  line=2    column=5   
+ERROR        @                    line=2    column=8   
 ERROR        @                    line=2    column=9   
-ERROR        @                    line=2    column=10  
-IDENTIFIER   e                    line=2    column=11  
-DELIMITER    ;                    line=2    column=12  
-EOF                               line=2    column=13  
+IDENTIFIER   e                    line=2    column=10  
+DELIMITER    ;                    line=2    column=11  
+EOF                               line=2    column=12  
