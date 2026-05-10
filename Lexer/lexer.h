@@ -2,8 +2,9 @@
 #define LEXER_H
 #include <stddef.h>
 
+#define MAX_LEXEME_LENGTH 64
+
 typedef enum {
-    STATE_START,
     STATE_IDENTIFIER,
     STATE_INTEGER,
     STATE_DELIMITER,
@@ -24,8 +25,7 @@ typedef enum {
 
 typedef struct {
     TokenType type;
-    char lexeme[64];
-
+    char lexeme[MAX_LEXEME_LENGTH];
     int line;
     int column;
 } Token;

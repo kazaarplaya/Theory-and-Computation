@@ -67,8 +67,14 @@ static Token create_token(Lexer *l, TokenType type, size_t start){
     token.type = type;
     token.line = l->line;
     token.column = l->column;
-    
+
+    // check if length is greater than defined max
     size_t length = l->currentPosition - start;
+    if (length >= MAX_LEXEME_LENGTH) {
+        length = MAX_LEXEME_LENGTH - 1;
+        token.type = TOKEN_ERROR;
+    }
+
     strncpy(token.lexeme, l->source + start, length);
     token.lexeme[length] = '\0';
     return token;
