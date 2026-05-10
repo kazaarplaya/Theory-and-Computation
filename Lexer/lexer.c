@@ -6,18 +6,39 @@
 
 
 static const char* keywords[] = {"int", "char", "if", "else", "while", "for", "do", "return"};
-static const char* delimiters = ";,(){}[]";
-static const char* operators = "+-/%*=";
 
 /* Character Helpers */
-static bool is_operator(char c){
-    if (strchr(operators, c) != NULL){
-        return true;
+static bool is_operator(char c) {
+    switch (c) {
+        case '+':
+        case '-':
+        case '/':
+        case '%':
+        case '*':
+        case '=':
+            return true;
+        default:
+            return false;
     }
-    return false;
 }
 
-static bool is_keyword(char *string){
+static bool is_delimiter(const char c) {
+    switch (c) {
+        case ';':
+        case ',':
+        case '(':
+        case ')':
+        case '{':
+        case '}':
+        case '[':
+        case ']':
+            return true;
+        default:
+            return false;
+    }
+}
+
+static bool is_keyword(const char *string){
     size_t length = sizeof(keywords) / sizeof(keywords[0]);
     for(size_t i = 0; i < length; i++){
         if(strcmp(keywords[i], string) == 0){
@@ -27,28 +48,21 @@ static bool is_keyword(char *string){
     return false;
 } 
 
-static bool is_delimiter(char c){
-    if (strchr(delimiters, c) != NULL){
-        return true;
-    }
-    return false;
-} 
-
 /* Token Helpers */
 const char* token_type_to_string(TokenType t){
-    switch (t){
-        case IDENTIFIER: return "IDENTIFIER";
-        case KEYWORD: return "KEYWORD";
-        case DELIMITER: return "DELIMITER";
-        case INTEGER: return "INTEGER";
-        case OPERATOR: return "OPERATOR";
-        case EOF_TOKEN: return "EOF";
-        case ERROR: return "ERROR";
+    switch(t) {
+        case TOKEN_IDENTIFIER: return "IDENTIFIER";
+        case TOKEN_KEYWORD: return "KEYWORD";
+        case TOKEN_DELIMITER: return "DELIMITER";
+        case TOKEN_INTEGER: return "INTEGER";
+        case TOKEN_OPERATOR: return "OPERATOR";
+        case TOKEN_EOF: return "EOF";
+        case TOKEN_ERROR: return "ERROR";
         default: return "UNKNOWN";
     }
 };
 
-Token create_token(Lexer *l, TokenType type, size_t start){
+static Token create_token(Lexer *l, TokenType type, size_t start){
     Token token;
     token.type = type;
     token.line = l->line;
@@ -70,7 +84,7 @@ static void advance_char(Lexer *l){
     } else {
         l->column++;
     }
-
+    
     // move pointer 
     if (l->currentPosition >= l->inputLength){
         l->ch = '\0';
@@ -78,6 +92,7 @@ static void advance_char(Lexer *l){
         l->ch = l->source[l->nextPosition];
     }
 
+    // advance pointer by 1 position
     l->currentPosition = l->nextPosition;
     l->nextPosition++;
 }
@@ -97,6 +112,22 @@ Lexer initialise_lexer(const char* input){
     return l;
 }
 
+static LexerState get_start_state(char c){
+    if (c == '\0'){
+        return STATE_EOF;
+    } else if (is_delimiter(c)){
+        return STATE_DELIMITER;
+    } else if (is_operator(c)){
+        return STATE_OPERATOR;
+    } else if (isdigit(c)){
+        return STATE_INTEGER;
+    } else if (isalpha(c) || c == '_') {
+        return STATE_IDENTIFIER;
+    } else {
+        return STATE_ERROR;
+    }
+}
+
 /* Main Lexer Logic */
 Token tokenize(Lexer *l){
 
@@ -105,74 +136,53 @@ Token tokenize(Lexer *l){
         advance_char(l);
     }
 
-    // eof
-    if (l->ch == '\0') {
-        size_t start = l->currentPosition;
-        Token token = create_token(l, EOF_TOKEN, start);
-        return token;
-    }
-
-    // delimiter
-    else if (is_delimiter(l->ch)) {
-        size_t start = l->currentPosition;
-        advance_char(l);
-        Token token = create_token(l, DELIMITER, start);
-        return token;
-    }
+    // start state
+    size_t start = l->currentPosition;
+    LexerState state = get_start_state(l->ch);
     
-    // operators
-    else if (is_operator(l->ch)) {
-        size_t start = l->currentPosition;
-        advance_char(l);
-        Token token = create_token(l, OPERATOR, start);
-        return token;
-    }
-
-    // integers
-    else if (isdigit(l->ch)){
-        size_t start = l->currentPosition; 
-        bool has_error = false;
-
-        // consume valid digit 
-        while(isdigit(l->ch)){
+    // tokenization logic
+    switch(state) {
+        case STATE_EOF:
             advance_char(l);
-        }
-        
-        // check if error
-        if (isalpha(l->ch) || l->ch == '_'){
-            has_error = true;
+            return create_token(l, TOKEN_EOF, start);
 
-            while(isalpha(l->ch) || l->ch == '_'){
+        case STATE_DELIMITER:
+            advance_char(l);
+            return create_token(l, TOKEN_DELIMITER, start);
+
+        case STATE_OPERATOR:
+            advance_char(l);
+            return create_token(l, TOKEN_OPERATOR, start);
+
+        case STATE_INTEGER:
+            // consume valid digit 
+            while(isdigit(l->ch)){
                 advance_char(l);
             }
-        }
+            
+            // check if integer is invalid
+            if (!isdigit(l->ch) || l->ch == '_'){
+                while(!is_delimiter(l->ch)){
+                    advance_char(l);
+                }
+                return create_token(l, TOKEN_ERROR, start);
+            }
+            return create_token(l, TOKEN_INTEGER, start);
 
-        if (has_error){
-            return create_token(l, ERROR, start);
-        }
-        return create_token(l, INTEGER, start);
-    }
+        case STATE_IDENTIFIER:
+            while(isalnum(l->ch) || l->ch == '_'){
+                advance_char(l);
+            }
+            
+            Token token = create_token(l, TOKEN_IDENTIFIER, start);
+            if (is_keyword(token.lexeme)) {
+                return create_token(l, TOKEN_KEYWORD, start);
+            } 
+            return token;
 
-    // identifier / keyword
-    else if (isalpha(l->ch) || l->ch == '_'){
-        bool has_error = false;
-        size_t start = l->currentPosition;
-
-        while(isalnum(l->ch) || l->ch == '_'){
-            advance_char(l);
-        }
-        
-        Token token = create_token(l, IDENTIFIER, start);
-        if (is_keyword(token.lexeme)) {
-            return create_token(l, KEYWORD, start);
-        } 
-        return token;
-    }
-
-    else {
-        size_t start = l->currentPosition;
-        advance_char(l);
-        Token token = create_token(l, ERROR, start);
-        return token;
-    }
+        case STATE_ERROR:
+            default:
+                advance_char(l);
+                return create_token(l, TOKEN_ERROR, start);
+        };
 }

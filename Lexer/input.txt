@@ -1,2 +1,2 @@
-@ i_nt x=10a;
-int nam1e;
+12@34;
+int nam@@e;

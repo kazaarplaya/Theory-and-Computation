@@ -3,13 +3,23 @@
 #include <stddef.h>
 
 typedef enum {
-    KEYWORD,
-    IDENTIFIER,
-    INTEGER, 
-    DELIMITER,
-    OPERATOR,
-    ERROR, 
-    EOF_TOKEN,
+    STATE_START,
+    STATE_IDENTIFIER,
+    STATE_INTEGER,
+    STATE_DELIMITER,
+    STATE_OPERATOR,
+    STATE_ERROR,
+    STATE_EOF
+} LexerState; 
+
+typedef enum {
+    TOKEN_KEYWORD, 
+    TOKEN_IDENTIFIER,
+    TOKEN_INTEGER, 
+    TOKEN_DELIMITER,
+    TOKEN_OPERATOR,
+    TOKEN_ERROR, 
+    TOKEN_EOF,
 } TokenType; 
 
 typedef struct {

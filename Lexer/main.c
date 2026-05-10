@@ -53,7 +53,7 @@ int main(int argc, char *argv[]) {
             curr.lexeme,
             curr.line,
             curr.column);     
-    } while (curr.type != EOF_TOKEN);
+    } while (curr.type != TOKEN_EOF);
 
     // free memory and pointers
     fclose(fptr);
