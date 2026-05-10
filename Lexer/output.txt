@@ -1,5 +1,5 @@
-ERROR        12@34                line=1    column=1   
-DELIMITER    ;                    line=1    column=6   
+ERROR        12@3                 line=1    column=1   
+DELIMITER    ;                    line=1    column=5   
 KEYWORD      int                  line=2    column=1   
 IDENTIFIER   nam                  line=2    column=5   
 ERROR        @                    line=2    column=8   

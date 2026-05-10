@@ -134,6 +134,13 @@ static LexerState get_start_state(char c){
     }
 }
 
+static bool is_safe_point(char c) {
+    return c == '\0' ||
+           isspace((unsigned char)c) ||
+           is_delimiter(c) ||
+           is_operator(c);
+}
+
 /* Main Lexer Logic */
 Token tokenize(Lexer *l){
 
@@ -169,8 +176,8 @@ Token tokenize(Lexer *l){
             }
             
             // check if integer is invalid
-            if (!isdigit(l->ch) || l->ch == '_'){
-                while (l->ch != '\0' && !isspace(l->ch) && !is_delimiter(l->ch) && !is_operator(l->ch)) {
+            if (!is_safe_point(l->ch)){
+                while (!is_safe_point(l->ch)) {
                     advance_char(l);
                 }
                 return create_token(l, TOKEN_ERROR, start_position, start_line, start_column);
