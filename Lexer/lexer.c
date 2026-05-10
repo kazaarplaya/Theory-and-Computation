@@ -46,7 +46,14 @@ static bool is_keyword(const char *string){
         }
     }
     return false;
-} 
+}
+
+static bool is_safe_point(char c) {
+    return c == '\0' ||
+           isspace((unsigned char)c) ||
+           is_delimiter(c) ||
+           is_operator(c);
+}
 
 /* Token Helpers */
 const char* token_type_to_string(TokenType t){
@@ -125,20 +132,13 @@ static LexerState get_start_state(char c){
         return STATE_DELIMITER;
     } else if (is_operator(c)){
         return STATE_OPERATOR;
-    } else if (isdigit(c)){
+    } else if (isdigit((unsigned char)c)){
         return STATE_INTEGER;
-    } else if (isalpha(c) || c == '_') {
+    } else if (isalpha((unsigned char)c) || c == '_') {
         return STATE_IDENTIFIER;
     } else {
         return STATE_ERROR;
     }
-}
-
-static bool is_safe_point(char c) {
-    return c == '\0' ||
-           isspace((unsigned char)c) ||
-           is_delimiter(c) ||
-           is_operator(c);
 }
 
 /* Main Lexer Logic */
@@ -171,7 +171,7 @@ Token tokenize(Lexer *l){
 
         case STATE_INTEGER:
             // consume valid digit 
-            while(isdigit(l->ch)){
+            while(isdigit((unsigned char)l->ch)){
                 advance_char(l);
             }
             
