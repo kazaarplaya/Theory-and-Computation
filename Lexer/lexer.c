@@ -7,7 +7,13 @@
 
 static const char* keywords[] = {"int", "char", "if", "else", "while", "for", "do", "return"};
 
-/* Character Helpers */
+/***********************************************
+ *  Character Helpers
+ ***********************************************/
+
+/**
+ * Check if a character is a valid operator
+ */
 static bool is_operator(char c) {
     switch (c) {
         case '+':
@@ -22,6 +28,9 @@ static bool is_operator(char c) {
     }
 }
 
+/**
+ * Check if a character is a delimiter
+ */
 static bool is_delimiter(const char c) {
     switch (c) {
         case ';':
@@ -38,6 +47,9 @@ static bool is_delimiter(const char c) {
     }
 }
 
+/**
+ * Check if a string is a recognised keyword
+ */
 static bool is_keyword(const char *string){
     size_t length = sizeof(keywords) / sizeof(keywords[0]);
     for(size_t i = 0; i < length; i++){
@@ -48,6 +60,9 @@ static bool is_keyword(const char *string){
     return false;
 }
 
+/**
+ * Stop 
+ */
 static bool is_safe_point(char c) {
     return c == '\0' ||
            isspace((unsigned char)c) ||
@@ -55,7 +70,10 @@ static bool is_safe_point(char c) {
            is_operator(c);
 }
 
-/* Token Helpers */
+/***********************************************
+ *  Token Helpers
+ ***********************************************/
+
 const char* token_type_to_string(TokenType t){
     switch(t) {
         case TOKEN_IDENTIFIER: return "IDENTIFIER";
@@ -87,7 +105,10 @@ static Token create_token(Lexer *l, TokenType type, size_t start_position, int s
     return token;
 };
 
-/* Lexer Initialisation and Lexer Movement */
+/***********************************************
+ *  Lexer Initialisation and Helpers
+ ***********************************************/
+
 static void advance_char(Lexer *l){
 
     // advance line and column
@@ -141,7 +162,10 @@ static LexerState get_start_state(char c){
     }
 }
 
-/* Main Lexer Logic */
+/***********************************************
+ * DFA / Tokenization Logic
+ ***********************************************/
+
 Token tokenize(Lexer *l){
 
     // skip whitespaces
