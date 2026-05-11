@@ -127,17 +127,15 @@ int main(int argc, char *argv[]) {
             curr.column);   
 
     } while (curr.type != TOKEN_EOF);
-
     fprintf(stderr, "[INFO] Tokenisation complete\n");
 
     // Close open files and free dynamically allocated memory.
     fprintf(stderr, "[INFO] Cleaning up resources\n");
-
+    
     fclose(fptr);
     fclose(outputfptr);
     free(source);
 
     fprintf(stderr, "[INFO] Program finished successfully\n");
-    
     return EXIT_SUCCESS;
 }
