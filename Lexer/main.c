@@ -36,7 +36,7 @@ int main(int argc, char *argv[]) {
 
     /*
      * Validate command line arguments. Lexer expects 
-     * only one argument which is the input file location.
+     * only one argument which is the input file location
      */
     if (argc != 2) {
         fprintf(stderr, "[ERROR] Invalid number of arguments\n");
@@ -48,7 +48,7 @@ int main(int argc, char *argv[]) {
     
     /*
      * Open the source file in read mode and 
-     * exit if the input file could not be read. 
+     * exit if the input file could not be read
      */
     fprintf(stderr, "[INFO] Opening input file\n");
 
@@ -61,7 +61,7 @@ int main(int argc, char *argv[]) {
     fprintf(stderr, "[INFO] Input file opened successfully\n");
     
     /*
-     * Open output file where generated tokens will be written.
+     * Open output file where generated tokens will be written
      */
     fprintf(stderr, "[INFO] Creating output file: output.txt\n");
 
@@ -76,7 +76,7 @@ int main(int argc, char *argv[]) {
 
     /*
      * Read the input file into a dynamically allocated string buffer.
-     * This buffer is then used as the input source for the lexer.
+     * This buffer is then used as the input source for the lexer
      */
     fprintf(stderr, "[INFO] Reading input file into buffer\n");
 
@@ -98,7 +98,7 @@ int main(int argc, char *argv[]) {
 
     fprintf(stderr, "[INFO] Starting tokenisation\n");
 
-    // Repeatedly tokenize the input until the EOF token is reached.
+    // Repeatedly tokenize the input until the EOF token is reached
     do {
         curr = tokenize(&lexer);
 
@@ -119,7 +119,7 @@ int main(int argc, char *argv[]) {
             curr.line,
             curr.column);
 
-        // Write token to output file.
+        // Write token to output file
         fprintf(outputfptr, "%-12s %-20s line=%-4d column=%-4d\n",
             token_type_to_string(curr.type),
             curr.lexeme,

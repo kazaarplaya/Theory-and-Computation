@@ -1,12 +1,1 @@
-int main() {
-    int x = 123abc;
-    char valid_name;
-    this_is_a_very_long_identifier_name_designed_to_exceed_the_sixty_four_character_lexeme_buffer_limit_for_testing;
-    int huge = 1234567890123456789012345678901234567890123456789012345678901234567890;
-    name@value;
-    @@@###
-    int café = 10;
-    if (x) {
-        return x;
-    }
-}
+int café = 10;
