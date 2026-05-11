@@ -1,0 +1,8 @@
+KEYWORD      int                  line=1    column=1   
+IDENTIFIER   caf                  line=1    column=5   
+ERROR        Ã                    line=1    column=8   
+ERROR        ©                    line=1    column=9   
+OPERATOR     =                    line=1    column=11  
+INTEGER      10                   line=1    column=13  
+DELIMITER    ;                    line=1    column=15  
+EOF                               line=1    column=16  
