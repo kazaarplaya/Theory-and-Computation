@@ -61,7 +61,8 @@ static bool is_keyword(const char *string){
 }
 
 /**
- * Stop 
+ * Used for panic mode consumption for integers.
+ * Whitespace, delimiters, operators and null terminators are safe recovery points
  */
 static bool is_safe_point(char c) {
     return c == '\0' ||
@@ -74,6 +75,9 @@ static bool is_safe_point(char c) {
  *  Token Helpers
  ***********************************************/
 
+/**
+ * Converts TokenType to string 
+ */
 const char* token_type_to_string(TokenType t){
     switch(t) {
         case TOKEN_IDENTIFIER: return "IDENTIFIER";
@@ -87,6 +91,17 @@ const char* token_type_to_string(TokenType t){
     }
 };
 
+/**
+ * Creates and returns a Token from the lexer input
+ *
+ * The token is built using the token type, starting position, and starting
+ * line and column passed into the function. The lexeme is copied from the
+ * source input between start_position and the lexer's current position.
+ *
+ * If the lexeme is longer than MAX_LEXEME_LENGTH, it is truncated to fit
+ * inside the token buffer and the token type is changed to TOKEN_ERROR to
+ * indicate that the input was too long to be treated as a valid token
+ */
 static Token create_token(Lexer *l, TokenType type, size_t start_position, int start_line, int start_col){
     Token token;
     token.type = type;
@@ -100,6 +115,7 @@ static Token create_token(Lexer *l, TokenType type, size_t start_position, int s
         token.type = TOKEN_ERROR;
     }
 
+    // copy characters into token lexeme
     strncpy(token.lexeme, l->source + start_position, length);
     token.lexeme[length] = '\0';
     return token;
@@ -107,11 +123,19 @@ static Token create_token(Lexer *l, TokenType type, size_t start_position, int s
 
 /***********************************************
  *  Lexer Initialisation and Helpers
- ***********************************************/
+***********************************************/
 
+/**
+ * Advances the lexer by one character
+ *
+ * This updates the lexer's line and column counters based on the current
+ * character, then moves the current and next positions forward in the input
+ * stream. If the lexer has reached the end of the input, the current
+ * character is set to '\0' to mark EOF.
+ */
 static void advance_char(Lexer *l){
 
-    // advance line and column
+    // update line and column 
     if (l->ch == '\n') {
         l->line++; 
         l->column = 1;
@@ -131,6 +155,9 @@ static void advance_char(Lexer *l){
     l->next_position++;
 }
 
+/**
+ * Initialise and returns a lexer for the input string
+ */
 Lexer initialise_lexer(const char* input){
     Lexer l;
     l.source = input;
@@ -146,6 +173,9 @@ Lexer initialise_lexer(const char* input){
     return l;
 }
 
+/**
+ * Initialise and returns a lexer for the input string
+ */
 static LexerState get_start_state(char c){
     if (c == '\0'){
         return STATE_EOF;
@@ -166,6 +196,23 @@ static LexerState get_start_state(char c){
  * DFA / Tokenization Logic
  ***********************************************/
 
+/**
+ * Reads and returns the next token from the lexer input.
+ *
+ * Leading whitespace characters are skipped before tokenisation begins.
+ * The lexer then records the starting position, line, and column of the
+ * token before determining the correct start state from the current
+ * character.
+ *
+ * Single character tokens such as delimiters and operators are consumed
+ * immediately. Integer tokens consume consecutive digits and use panic-mode
+ * recovery if an invalid character appears before a safe stopping point.
+ * Identifier tokens consume letters, digits, and underscores, then check
+ * whether the completed lexeme is a keyword.
+ *
+ * If the current character does not match any valid token category, an
+ * error token is returned.
+ */
 Token tokenize(Lexer *l){
 
     // skip whitespaces
@@ -177,7 +224,7 @@ Token tokenize(Lexer *l){
     size_t start_position = l->current_position;
     int start_line = l->line;
     int start_column = l->column;
-    LexerState state = get_start_state(l->ch);
+    LexerState state = get_start_state(l->ch); 
     
     // tokenization logic
     switch(state) {
