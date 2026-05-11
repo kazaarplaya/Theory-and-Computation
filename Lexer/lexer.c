@@ -108,14 +108,14 @@ static Token create_token(Lexer *l, TokenType type, size_t start_position, int s
     token.line = start_line;
     token.column = start_col;
 
-    // check if length is greater than defined max
+    // Check if length is greater than defined max
     size_t length = l->current_position - start_position;
     if (length >= MAX_LEXEME_LENGTH) {
         length = MAX_LEXEME_LENGTH - 1;
         token.type = TOKEN_ERROR;
     }
 
-    // copy characters into token lexeme
+    // Copy characters into token lexeme
     strncpy(token.lexeme, l->source + start_position, length);
     token.lexeme[length] = '\0';
     return token;
@@ -135,7 +135,7 @@ static Token create_token(Lexer *l, TokenType type, size_t start_position, int s
  */
 static void advance_char(Lexer *l){
 
-    // update line and column 
+    // Update line and column 
     if (l->ch == '\n') {
         l->line++; 
         l->column = 1;
@@ -143,14 +143,14 @@ static void advance_char(Lexer *l){
         l->column++;
     }
     
-    // move pointer 
+    // Move pointer 
     if (l->current_position >= l->input_length){
         l->ch = '\0';
     } else {
         l->ch = l->source[l->next_position];
     }
 
-    // advance pointer by 1 position
+    // Advance pointer by 1 position
     l->current_position = l->next_position;
     l->next_position++;
 }
@@ -174,7 +174,7 @@ Lexer initialise_lexer(const char* input){
 }
 
 /**
- * Initialise and returns a lexer for the input string
+ * Identify start state based on the character
  */
 static LexerState get_start_state(char c){
     if (c == '\0'){
@@ -215,18 +215,18 @@ static LexerState get_start_state(char c){
  */
 Token tokenize(Lexer *l){
 
-    // skip whitespaces
+    // Skip whitespaces
     while (isspace(l->ch)){
         advance_char(l);
     }
 
-    // start state
+    // Start state
     size_t start_position = l->current_position;
     int start_line = l->line;
     int start_column = l->column;
     LexerState state = get_start_state(l->ch); 
     
-    // tokenization logic
+    // Tokenization logic
     switch(state) {
         case STATE_EOF:
             advance_char(l);
@@ -241,25 +241,41 @@ Token tokenize(Lexer *l){
             return create_token(l, TOKEN_OPERATOR, start_position, start_line, start_column);
 
         case STATE_INTEGER:
-            // consume valid digit 
+
+            // Advance pointer while current char is a digit
             while(isdigit((unsigned char)l->ch)){
                 advance_char(l);
             }
             
-            // check if integer is invalid
-            if (!is_safe_point(l->ch)){
+            /*
+            * After consuming the valid digits, check whether the lexer stopped at a safe recovery point
+            *
+            * If the next character is safe, the lexeme is a valid integer token.
+            * If the next character is not safe, consume characters until a safe recovery
+            * point is reached and return an error token. This is the lexer’s panic-mode
+            * recovery for malformed integer literals.
+            */
+            if (!is_safe_point(l->ch)) {
                 while (!is_safe_point(l->ch)) {
                     advance_char(l);
                 }
                 return create_token(l, TOKEN_ERROR, start_position, start_line, start_column);
             }
+
             return create_token(l, TOKEN_INTEGER, start_position, start_line, start_column);
 
         case STATE_IDENTIFIER:
+
+            // Advance pointer while current char is alphanumeric or an underscore
             while(isalnum(l->ch) || l->ch == '_'){
                 advance_char(l);
             }
             
+            /*
+            * After consuming the characters, check if the token.lexeme is a recognised keyword.
+            * If it is a token, return TOKEN_KEYWORD.
+            * If not, return TOKEN_IDENTIFIER
+            */
             Token token = create_token(l, TOKEN_IDENTIFIER, start_position, start_line, start_column);
             if (is_keyword(token.lexeme)) {
                 return create_token(l, TOKEN_KEYWORD, start_position, start_line, start_column);

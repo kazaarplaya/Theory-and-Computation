@@ -4,6 +4,10 @@
 
 #define MAX_LEXEME_LENGTH 64
 
+/*
+ * Represents the lexer state used to classify the next token
+ * based on the current input character
+ */
 typedef enum {
     STATE_IDENTIFIER,
     STATE_INTEGER,
@@ -13,6 +17,9 @@ typedef enum {
     STATE_EOF
 } LexerState; 
 
+/*
+ * Represents the type of token returned by the lexer
+ */
 typedef enum {
     TOKEN_KEYWORD, 
     TOKEN_IDENTIFIER,
@@ -23,6 +30,10 @@ typedef enum {
     TOKEN_EOF,
 } TokenType; 
 
+/*
+ * Stores a single token produced by the lexer, including its type,
+ * lexeme, and source location
+ */
 typedef struct {
     TokenType type;
     char lexeme[MAX_LEXEME_LENGTH];
@@ -30,6 +41,9 @@ typedef struct {
     int column;
 } Token;
 
+/*
+ * Stores the current state of the lexer while scanning the input
+ */
 typedef struct {
     const char* source;
     size_t input_length;
