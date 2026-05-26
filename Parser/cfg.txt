@@ -1,5 +1,6 @@
 Program -> ClassDeclarationList
 
+// Classes + Members
 ClassDeclarationList -> ClassDeclaration | ClassDeclaration ClassDeclarationList
 ClassDeclarationList -> "empty"
 
@@ -19,31 +20,66 @@ VarDeclaration -> Type Identifier ";"
 Type -> "int"
 Type -> "char"
 
-FunctionDeclaration -> Identifier "(" ")" Block
+FunctionDeclaration -> Identifier "(" FunctionParameters ")" Block
 
+// Parameter
+FunctionParameters -> Parameter ParameterListTail
+FunctionParameters -> empty
+
+Parameter -> Type Identifier
+
+ParameterList Tail -> "," Parameter
+
+// Body + Functions
 Block -> "{" FunctionBody "}"
 
 FunctionBody -> VarDeclaration;
 FunctionBody -> Assignment
 FunctionBody -> ReturnStatement 
 FunctionBody -> IfStatement
+FunctionBody -> WhileStatement
+FunctionBody -> ForStatement
+FunctionBody -> DoStatement
 
 Assignment -> Type Identifier "=" Integer ";"
 
 ReturnStatement -> "return" ";"
 ReturnStatement -> "return" Integer ";"
+ReturnStatement -> "return" Identifier ";"
 
 IfStatement -> "if" Expression Block
+IfStatement -> "if" Expression Block "else" Block
 
-Expression -> Expression 
+WhileStatement -> "while" "(" Expression ")" Block
 
+// For Loop
+ForStatement -> "for" "(" ForInitialisation ";" Expression ";" Assignment ")" Block 
 
+ForInitialisation -> empty
+ForInitialisation -> AssignmentWithNoSemi
+ForInitialisation -> Assignment
 
+AssignmentWithNoSemi -> Type Identifier "=" Integer
+
+DoStatement -> "do" Block "while" "(" Condition ")" ";"
+
+// Expressions, Terms, Factors
+Expression -> Expression "+" Term
+Expression -> Expression "-" Term
+Expression -> Term
+
+Term -> Term "*" Factor
+Term -> Term "/" Factor
+Term -> Term "%" Factor
+Term -> Factor
+
+Factor -> Identifier
+Factor -> Integer
 
 class Person {
     public int age = 5;
 
-    public int getAge(){
+    public int getAge(x + 5){
         return 0;
     }
 
@@ -52,5 +88,11 @@ class Person {
     }
 }
 
+
+if(){
+
+} else {
+
+}
 
 5 + 10 / 2
