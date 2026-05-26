@@ -5,7 +5,10 @@
 #include <stddef.h>
 
 
-static const char* keywords[] = {"int", "char", "if", "else", "while", "for", "do", "return"};
+static const char* keywords[] = {
+    "int", "char", "if", "else", "while", "for", "do", "return",
+    "class", "public", "private", "protected", "new", "delete"
+};
 
 /***********************************************
  *  Character Helpers
