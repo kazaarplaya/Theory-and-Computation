@@ -1,0 +1,56 @@
+Program -> ClassDeclarationList
+
+ClassDeclarationList -> ClassDeclaration | ClassDeclaration ClassDeclarationList
+ClassDeclarationList -> "empty"
+
+ClassDeclaration -> "class" Identifier "{" "MemberList "}" ";"
+
+MemberList -> MemberDeclaration | MemberDeclaration MemberList
+
+MemberDeclaration -> Visibility | Visibility VarDeclaration
+MemberDeclaration -> Visibility FunctionDeclaration
+
+Visibility -> "public"
+Visibility -> "private"
+Visibility -> "protected"
+
+VarDeclaration -> Type Identifier ";"
+
+Type -> "int"
+Type -> "char"
+
+FunctionDeclaration -> Identifier "(" ")" Block
+
+Block -> "{" FunctionBody "}"
+
+FunctionBody -> VarDeclaration;
+FunctionBody -> Assignment
+FunctionBody -> ReturnStatement 
+FunctionBody -> IfStatement
+
+Assignment -> Type Identifier "=" Integer ";"
+
+ReturnStatement -> "return" ";"
+ReturnStatement -> "return" Integer ";"
+
+IfStatement -> "if" Expression Block
+
+Expression -> Expression 
+
+
+
+
+class Person {
+    public int age = 5;
+
+    public int getAge(){
+        return 0;
+    }
+
+    if (age + 5) {
+        return 0;
+    }
+}
+
+
+5 + 10 / 2
