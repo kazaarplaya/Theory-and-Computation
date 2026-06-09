@@ -4,7 +4,7 @@ ClassDeclarationList -> ClassDeclaration ClassDeclarationList
 ClassDeclarationList -> empty
 
 
-// Classes
+// Classes and Members
 
 ClassDeclaration -> "class" Identifier "{" MemberList "}" ";"
 
@@ -13,6 +13,7 @@ MemberList -> empty
 
 MemberDeclaration -> Visibility VarDeclaration
 MemberDeclaration -> Visibility FunctionDeclaration
+MemberDeclaration -> Visibility ClassDeclaration
 
 Visibility -> "public"
 Visibility -> "private"
@@ -26,14 +27,14 @@ Type -> "char"
 Type -> Identifier
 
 
-// Variables
+// Variable Declarations
 
 VarDeclaration -> Type Identifier ";"
 VarDeclaration -> Type Identifier "=" Expression ";"
 VarDeclaration -> Type Identifier "=" NewExpression ";"
 
 
-// Functions
+// Function Declarations
 
 FunctionDeclaration -> Type Identifier "(" FunctionParameters ")" Block
 FunctionDeclaration -> "void" Identifier "(" FunctionParameters ")" Block
@@ -65,7 +66,7 @@ Statement -> DeleteStatement ";"
 Statement -> Block
 
 
-// Assignments
+// Assignment
 
 Assignment -> Identifier "=" Expression
 Assignment -> Identifier "=" NewExpression
@@ -120,24 +121,6 @@ DeleteStatement -> "delete" "[" "]" Identifier
 // Expressions
 
 Expression -> AdditiveExpression
-
-AdditiveExpression -> Term AdditiveTail
-
-AdditiveTail -> "+" Term AdditiveTail
-AdditiveTail -> "-" Term AdditiveTail
-AdditiveTail -> empty
-
-Term -> Factor TermTail
-
-TermTail -> "*" Factor TermTail
-TermTail -> "/" Factor TermTail
-TermTail -> "%" Factor TermTail
-TermTail -> empty
-
-Factor -> Identifier
-Factor -> Integer
-Factor -> Character
-Factor -> "(" Expression ")"
 
 AdditiveExpression -> Term AdditiveTail
 
