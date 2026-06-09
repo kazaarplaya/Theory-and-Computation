@@ -1,0 +1,1620 @@
+Grammar
+
+    0 $accept: program $end
+
+    1 program: class_declaration_list
+
+    2 class_declaration_list: class_declaration class_declaration_list
+    3                       | ε
+
+    4 class_declaration: CLASS IDENTIFIER '{' member_list '}' ';'
+
+    5 member_list: member_declaration member_list
+    6            | ε
+
+    7 member_declaration: visibility var_declaration
+    8                   | visibility function_declaration
+    9                   | visibility class_declaration
+
+   10 visibility: PUBLIC
+   11           | PRIVATE
+   12           | PROTECTED
+
+   13 type: INT
+   14     | CHAR
+   15     | IDENTIFIER
+
+   16 var_declaration: type IDENTIFIER ';'
+   17                | type IDENTIFIER '=' expression ';'
+   18                | type IDENTIFIER '=' new_expression ';'
+
+   19 function_declaration: type IDENTIFIER '(' function_parameters ')' block
+   20                     | VOID IDENTIFIER '(' function_parameters ')' block
+
+   21 function_parameters: parameter parameter_list_tail
+   22                    | ε
+
+   23 parameter_list_tail: ',' parameter parameter_list_tail
+   24                    | ε
+
+   25 parameter: type IDENTIFIER
+
+   26 block: '{' statement_list '}'
+
+   27 statement_list: statement statement_list
+   28               | ε
+
+   29 statement: var_declaration
+   30          | assignment ';'
+   31          | return_statement
+   32          | if_statement
+   33          | while_statement
+   34          | for_statement
+   35          | do_statement
+   36          | delete_statement ';'
+   37          | block
+
+   38 assignment: IDENTIFIER '=' expression
+   39           | IDENTIFIER '=' new_expression
+
+   40 return_statement: RETURN ';'
+   41                 | RETURN expression ';'
+
+   42 if_statement: IF '(' expression ')' block
+   43             | IF '(' expression ')' block ELSE block
+
+   44 while_statement: WHILE '(' expression ')' block
+
+   45 for_statement: FOR '(' for_initialisation ';' expression ';' for_update ')' block
+
+   46 for_initialisation: ε
+   47                   | assignment
+   48                   | type IDENTIFIER '=' expression
+   49                   | type IDENTIFIER
+
+   50 for_update: ε
+   51           | assignment
+   52           | IDENTIFIER "++"
+   53           | IDENTIFIER "--"
+
+   54 do_statement: DO block WHILE '(' expression ')' ';'
+
+   55 new_expression: NEW type
+   56               | NEW type '[' expression ']'
+
+   57 delete_statement: DELETE IDENTIFIER
+   58                 | DELETE '[' ']' IDENTIFIER
+
+   59 expression: additive_expression
+
+   60 additive_expression: term additive_tail
+
+   61 additive_tail: '+' term additive_tail
+   62              | '-' term additive_tail
+   63              | ε
+
+   64 term: factor term_tail
+
+   65 term_tail: '*' factor term_tail
+   66          | '/' factor term_tail
+   67          | '%' factor term_tail
+   68          | ε
+
+   69 factor: IDENTIFIER
+   70       | INTEGER
+   71       | CHARACTER
+   72       | '(' expression ')'
+
+
+Terminals, with rules where they appear
+
+    $end (0) 0
+    '%' (37) 67
+    '(' (40) 19 20 42 43 44 45 54 72
+    ')' (41) 19 20 42 43 44 45 54 72
+    '*' (42) 65
+    '+' (43) 61
+    ',' (44) 23
+    '-' (45) 62
+    '/' (47) 66
+    ';' (59) 4 16 17 18 30 36 40 41 45 54
+    '=' (61) 17 18 38 39 48
+    '[' (91) 56 58
+    ']' (93) 56 58
+    '{' (123) 4 26
+    '}' (125) 4 26
+    error (256)
+    CLASS (258) 4
+    PUBLIC (259) 10
+    PRIVATE (260) 11
+    PROTECTED (261) 12
+    INT (262) 13
+    CHAR (263) 14
+    VOID (264) 20
+    IDENTIFIER (265) 4 15 16 17 18 19 20 25 38 39 48 49 52 53 57 58 69
+    INTEGER (266) 70
+    CHARACTER (267) 71
+    RETURN (268) 40 41
+    IF (269) 42 43
+    ELSE (270) 43
+    WHILE (271) 44 54
+    FOR (272) 45
+    DO (273) 54
+    NEW (274) 55 56
+    DELETE (275) 57 58
+    "++" (276) 52
+    "--" (277) 53
+
+
+Nonterminals, with rules where they appear
+
+    $accept (37)
+        on left: 0
+    program (38)
+        on left: 1
+        on right: 0
+    class_declaration_list (39)
+        on left: 2 3
+        on right: 1 2
+    class_declaration (40)
+        on left: 4
+        on right: 2 9
+    member_list (41)
+        on left: 5 6
+        on right: 4 5
+    member_declaration (42)
+        on left: 7 8 9
+        on right: 5
+    visibility (43)
+        on left: 10 11 12
+        on right: 7 8 9
+    type (44)
+        on left: 13 14 15
+        on right: 16 17 18 19 25 48 49 55 56
+    var_declaration (45)
+        on left: 16 17 18
+        on right: 7 29
+    function_declaration (46)
+        on left: 19 20
+        on right: 8
+    function_parameters (47)
+        on left: 21 22
+        on right: 19 20
+    parameter_list_tail (48)
+        on left: 23 24
+        on right: 21 23
+    parameter (49)
+        on left: 25
+        on right: 21 23
+    block (50)
+        on left: 26
+        on right: 19 20 37 42 43 44 45 54
+    statement_list (51)
+        on left: 27 28
+        on right: 26 27
+    statement (52)
+        on left: 29 30 31 32 33 34 35 36 37
+        on right: 27
+    assignment (53)
+        on left: 38 39
+        on right: 30 47 51
+    return_statement (54)
+        on left: 40 41
+        on right: 31
+    if_statement (55)
+        on left: 42 43
+        on right: 32
+    while_statement (56)
+        on left: 44
+        on right: 33
+    for_statement (57)
+        on left: 45
+        on right: 34
+    for_initialisation (58)
+        on left: 46 47 48 49
+        on right: 45
+    for_update (59)
+        on left: 50 51 52 53
+        on right: 45
+    do_statement (60)
+        on left: 54
+        on right: 35
+    new_expression (61)
+        on left: 55 56
+        on right: 18 39
+    delete_statement (62)
+        on left: 57 58
+        on right: 36
+    expression (63)
+        on left: 59
+        on right: 17 38 41 42 43 44 45 48 54 56 72
+    additive_expression (64)
+        on left: 60
+        on right: 59
+    additive_tail (65)
+        on left: 61 62 63
+        on right: 60 61 62
+    term (66)
+        on left: 64
+        on right: 60 61 62
+    term_tail (67)
+        on left: 65 66 67 68
+        on right: 64 65 66 67
+    factor (68)
+        on left: 69 70 71 72
+        on right: 64 65 66 67
+
+
+State 0
+
+    0 $accept: • program $end
+
+    CLASS  shift, and go to state 1
+
+    $default  reduce using rule 3 (class_declaration_list)
+
+    program                 go to state 2
+    class_declaration_list  go to state 3
+    class_declaration       go to state 4
+
+
+State 1
+
+    4 class_declaration: CLASS • IDENTIFIER '{' member_list '}' ';'
+
+    IDENTIFIER  shift, and go to state 5
+
+
+State 2
+
+    0 $accept: program • $end
+
+    $end  shift, and go to state 6
+
+
+State 3
+
+    1 program: class_declaration_list •
+
+    $default  reduce using rule 1 (program)
+
+
+State 4
+
+    2 class_declaration_list: class_declaration • class_declaration_list
+
+    CLASS  shift, and go to state 1
+
+    $default  reduce using rule 3 (class_declaration_list)
+
+    class_declaration_list  go to state 7
+    class_declaration       go to state 4
+
+
+State 5
+
+    4 class_declaration: CLASS IDENTIFIER • '{' member_list '}' ';'
+
+    '{'  shift, and go to state 8
+
+
+State 6
+
+    0 $accept: program $end •
+
+    $default  accept
+
+
+State 7
+
+    2 class_declaration_list: class_declaration class_declaration_list •
+
+    $default  reduce using rule 2 (class_declaration_list)
+
+
+State 8
+
+    4 class_declaration: CLASS IDENTIFIER '{' • member_list '}' ';'
+
+    PUBLIC     shift, and go to state 9
+    PRIVATE    shift, and go to state 10
+    PROTECTED  shift, and go to state 11
+
+    $default  reduce using rule 6 (member_list)
+
+    member_list         go to state 12
+    member_declaration  go to state 13
+    visibility          go to state 14
+
+
+State 9
+
+   10 visibility: PUBLIC •
+
+    $default  reduce using rule 10 (visibility)
+
+
+State 10
+
+   11 visibility: PRIVATE •
+
+    $default  reduce using rule 11 (visibility)
+
+
+State 11
+
+   12 visibility: PROTECTED •
+
+    $default  reduce using rule 12 (visibility)
+
+
+State 12
+
+    4 class_declaration: CLASS IDENTIFIER '{' member_list • '}' ';'
+
+    '}'  shift, and go to state 15
+
+
+State 13
+
+    5 member_list: member_declaration • member_list
+
+    PUBLIC     shift, and go to state 9
+    PRIVATE    shift, and go to state 10
+    PROTECTED  shift, and go to state 11
+
+    $default  reduce using rule 6 (member_list)
+
+    member_list         go to state 16
+    member_declaration  go to state 13
+    visibility          go to state 14
+
+
+State 14
+
+    7 member_declaration: visibility • var_declaration
+    8                   | visibility • function_declaration
+    9                   | visibility • class_declaration
+
+    CLASS       shift, and go to state 1
+    INT         shift, and go to state 17
+    CHAR        shift, and go to state 18
+    VOID        shift, and go to state 19
+    IDENTIFIER  shift, and go to state 20
+
+    class_declaration     go to state 21
+    type                  go to state 22
+    var_declaration       go to state 23
+    function_declaration  go to state 24
+
+
+State 15
+
+    4 class_declaration: CLASS IDENTIFIER '{' member_list '}' • ';'
+
+    ';'  shift, and go to state 25
+
+
+State 16
+
+    5 member_list: member_declaration member_list •
+
+    $default  reduce using rule 5 (member_list)
+
+
+State 17
+
+   13 type: INT •
+
+    $default  reduce using rule 13 (type)
+
+
+State 18
+
+   14 type: CHAR •
+
+    $default  reduce using rule 14 (type)
+
+
+State 19
+
+   20 function_declaration: VOID • IDENTIFIER '(' function_parameters ')' block
+
+    IDENTIFIER  shift, and go to state 26
+
+
+State 20
+
+   15 type: IDENTIFIER •
+
+    $default  reduce using rule 15 (type)
+
+
+State 21
+
+    9 member_declaration: visibility class_declaration •
+
+    $default  reduce using rule 9 (member_declaration)
+
+
+State 22
+
+   16 var_declaration: type • IDENTIFIER ';'
+   17                | type • IDENTIFIER '=' expression ';'
+   18                | type • IDENTIFIER '=' new_expression ';'
+   19 function_declaration: type • IDENTIFIER '(' function_parameters ')' block
+
+    IDENTIFIER  shift, and go to state 27
+
+
+State 23
+
+    7 member_declaration: visibility var_declaration •
+
+    $default  reduce using rule 7 (member_declaration)
+
+
+State 24
+
+    8 member_declaration: visibility function_declaration •
+
+    $default  reduce using rule 8 (member_declaration)
+
+
+State 25
+
+    4 class_declaration: CLASS IDENTIFIER '{' member_list '}' ';' •
+
+    $default  reduce using rule 4 (class_declaration)
+
+
+State 26
+
+   20 function_declaration: VOID IDENTIFIER • '(' function_parameters ')' block
+
+    '('  shift, and go to state 28
+
+
+State 27
+
+   16 var_declaration: type IDENTIFIER • ';'
+   17                | type IDENTIFIER • '=' expression ';'
+   18                | type IDENTIFIER • '=' new_expression ';'
+   19 function_declaration: type IDENTIFIER • '(' function_parameters ')' block
+
+    ';'  shift, and go to state 29
+    '='  shift, and go to state 30
+    '('  shift, and go to state 31
+
+
+State 28
+
+   20 function_declaration: VOID IDENTIFIER '(' • function_parameters ')' block
+
+    INT         shift, and go to state 17
+    CHAR        shift, and go to state 18
+    IDENTIFIER  shift, and go to state 20
+
+    $default  reduce using rule 22 (function_parameters)
+
+    type                 go to state 32
+    function_parameters  go to state 33
+    parameter            go to state 34
+
+
+State 29
+
+   16 var_declaration: type IDENTIFIER ';' •
+
+    $default  reduce using rule 16 (var_declaration)
+
+
+State 30
+
+   17 var_declaration: type IDENTIFIER '=' • expression ';'
+   18                | type IDENTIFIER '=' • new_expression ';'
+
+    IDENTIFIER  shift, and go to state 35
+    INTEGER     shift, and go to state 36
+    CHARACTER   shift, and go to state 37
+    NEW         shift, and go to state 38
+    '('         shift, and go to state 39
+
+    new_expression       go to state 40
+    expression           go to state 41
+    additive_expression  go to state 42
+    term                 go to state 43
+    factor               go to state 44
+
+
+State 31
+
+   19 function_declaration: type IDENTIFIER '(' • function_parameters ')' block
+
+    INT         shift, and go to state 17
+    CHAR        shift, and go to state 18
+    IDENTIFIER  shift, and go to state 20
+
+    $default  reduce using rule 22 (function_parameters)
+
+    type                 go to state 32
+    function_parameters  go to state 45
+    parameter            go to state 34
+
+
+State 32
+
+   25 parameter: type • IDENTIFIER
+
+    IDENTIFIER  shift, and go to state 46
+
+
+State 33
+
+   20 function_declaration: VOID IDENTIFIER '(' function_parameters • ')' block
+
+    ')'  shift, and go to state 47
+
+
+State 34
+
+   21 function_parameters: parameter • parameter_list_tail
+
+    ','  shift, and go to state 48
+
+    $default  reduce using rule 24 (parameter_list_tail)
+
+    parameter_list_tail  go to state 49
+
+
+State 35
+
+   69 factor: IDENTIFIER •
+
+    $default  reduce using rule 69 (factor)
+
+
+State 36
+
+   70 factor: INTEGER •
+
+    $default  reduce using rule 70 (factor)
+
+
+State 37
+
+   71 factor: CHARACTER •
+
+    $default  reduce using rule 71 (factor)
+
+
+State 38
+
+   55 new_expression: NEW • type
+   56               | NEW • type '[' expression ']'
+
+    INT         shift, and go to state 17
+    CHAR        shift, and go to state 18
+    IDENTIFIER  shift, and go to state 20
+
+    type  go to state 50
+
+
+State 39
+
+   72 factor: '(' • expression ')'
+
+    IDENTIFIER  shift, and go to state 35
+    INTEGER     shift, and go to state 36
+    CHARACTER   shift, and go to state 37
+    '('         shift, and go to state 39
+
+    expression           go to state 51
+    additive_expression  go to state 42
+    term                 go to state 43
+    factor               go to state 44
+
+
+State 40
+
+   18 var_declaration: type IDENTIFIER '=' new_expression • ';'
+
+    ';'  shift, and go to state 52
+
+
+State 41
+
+   17 var_declaration: type IDENTIFIER '=' expression • ';'
+
+    ';'  shift, and go to state 53
+
+
+State 42
+
+   59 expression: additive_expression •
+
+    $default  reduce using rule 59 (expression)
+
+
+State 43
+
+   60 additive_expression: term • additive_tail
+
+    '+'  shift, and go to state 54
+    '-'  shift, and go to state 55
+
+    $default  reduce using rule 63 (additive_tail)
+
+    additive_tail  go to state 56
+
+
+State 44
+
+   64 term: factor • term_tail
+
+    '*'  shift, and go to state 57
+    '/'  shift, and go to state 58
+    '%'  shift, and go to state 59
+
+    $default  reduce using rule 68 (term_tail)
+
+    term_tail  go to state 60
+
+
+State 45
+
+   19 function_declaration: type IDENTIFIER '(' function_parameters • ')' block
+
+    ')'  shift, and go to state 61
+
+
+State 46
+
+   25 parameter: type IDENTIFIER •
+
+    $default  reduce using rule 25 (parameter)
+
+
+State 47
+
+   20 function_declaration: VOID IDENTIFIER '(' function_parameters ')' • block
+
+    '{'  shift, and go to state 62
+
+    block  go to state 63
+
+
+State 48
+
+   23 parameter_list_tail: ',' • parameter parameter_list_tail
+
+    INT         shift, and go to state 17
+    CHAR        shift, and go to state 18
+    IDENTIFIER  shift, and go to state 20
+
+    type       go to state 32
+    parameter  go to state 64
+
+
+State 49
+
+   21 function_parameters: parameter parameter_list_tail •
+
+    $default  reduce using rule 21 (function_parameters)
+
+
+State 50
+
+   55 new_expression: NEW type •
+   56               | NEW type • '[' expression ']'
+
+    '['  shift, and go to state 65
+
+    $default  reduce using rule 55 (new_expression)
+
+
+State 51
+
+   72 factor: '(' expression • ')'
+
+    ')'  shift, and go to state 66
+
+
+State 52
+
+   18 var_declaration: type IDENTIFIER '=' new_expression ';' •
+
+    $default  reduce using rule 18 (var_declaration)
+
+
+State 53
+
+   17 var_declaration: type IDENTIFIER '=' expression ';' •
+
+    $default  reduce using rule 17 (var_declaration)
+
+
+State 54
+
+   61 additive_tail: '+' • term additive_tail
+
+    IDENTIFIER  shift, and go to state 35
+    INTEGER     shift, and go to state 36
+    CHARACTER   shift, and go to state 37
+    '('         shift, and go to state 39
+
+    term    go to state 67
+    factor  go to state 44
+
+
+State 55
+
+   62 additive_tail: '-' • term additive_tail
+
+    IDENTIFIER  shift, and go to state 35
+    INTEGER     shift, and go to state 36
+    CHARACTER   shift, and go to state 37
+    '('         shift, and go to state 39
+
+    term    go to state 68
+    factor  go to state 44
+
+
+State 56
+
+   60 additive_expression: term additive_tail •
+
+    $default  reduce using rule 60 (additive_expression)
+
+
+State 57
+
+   65 term_tail: '*' • factor term_tail
+
+    IDENTIFIER  shift, and go to state 35
+    INTEGER     shift, and go to state 36
+    CHARACTER   shift, and go to state 37
+    '('         shift, and go to state 39
+
+    factor  go to state 69
+
+
+State 58
+
+   66 term_tail: '/' • factor term_tail
+
+    IDENTIFIER  shift, and go to state 35
+    INTEGER     shift, and go to state 36
+    CHARACTER   shift, and go to state 37
+    '('         shift, and go to state 39
+
+    factor  go to state 70
+
+
+State 59
+
+   67 term_tail: '%' • factor term_tail
+
+    IDENTIFIER  shift, and go to state 35
+    INTEGER     shift, and go to state 36
+    CHARACTER   shift, and go to state 37
+    '('         shift, and go to state 39
+
+    factor  go to state 71
+
+
+State 60
+
+   64 term: factor term_tail •
+
+    $default  reduce using rule 64 (term)
+
+
+State 61
+
+   19 function_declaration: type IDENTIFIER '(' function_parameters ')' • block
+
+    '{'  shift, and go to state 62
+
+    block  go to state 72
+
+
+State 62
+
+   26 block: '{' • statement_list '}'
+
+    INT         shift, and go to state 17
+    CHAR        shift, and go to state 18
+    IDENTIFIER  shift, and go to state 73
+    RETURN      shift, and go to state 74
+    IF          shift, and go to state 75
+    WHILE       shift, and go to state 76
+    FOR         shift, and go to state 77
+    DO          shift, and go to state 78
+    DELETE      shift, and go to state 79
+    '{'         shift, and go to state 62
+
+    $default  reduce using rule 28 (statement_list)
+
+    type              go to state 80
+    var_declaration   go to state 81
+    block             go to state 82
+    statement_list    go to state 83
+    statement         go to state 84
+    assignment        go to state 85
+    return_statement  go to state 86
+    if_statement      go to state 87
+    while_statement   go to state 88
+    for_statement     go to state 89
+    do_statement      go to state 90
+    delete_statement  go to state 91
+
+
+State 63
+
+   20 function_declaration: VOID IDENTIFIER '(' function_parameters ')' block •
+
+    $default  reduce using rule 20 (function_declaration)
+
+
+State 64
+
+   23 parameter_list_tail: ',' parameter • parameter_list_tail
+
+    ','  shift, and go to state 48
+
+    $default  reduce using rule 24 (parameter_list_tail)
+
+    parameter_list_tail  go to state 92
+
+
+State 65
+
+   56 new_expression: NEW type '[' • expression ']'
+
+    IDENTIFIER  shift, and go to state 35
+    INTEGER     shift, and go to state 36
+    CHARACTER   shift, and go to state 37
+    '('         shift, and go to state 39
+
+    expression           go to state 93
+    additive_expression  go to state 42
+    term                 go to state 43
+    factor               go to state 44
+
+
+State 66
+
+   72 factor: '(' expression ')' •
+
+    $default  reduce using rule 72 (factor)
+
+
+State 67
+
+   61 additive_tail: '+' term • additive_tail
+
+    '+'  shift, and go to state 54
+    '-'  shift, and go to state 55
+
+    $default  reduce using rule 63 (additive_tail)
+
+    additive_tail  go to state 94
+
+
+State 68
+
+   62 additive_tail: '-' term • additive_tail
+
+    '+'  shift, and go to state 54
+    '-'  shift, and go to state 55
+
+    $default  reduce using rule 63 (additive_tail)
+
+    additive_tail  go to state 95
+
+
+State 69
+
+   65 term_tail: '*' factor • term_tail
+
+    '*'  shift, and go to state 57
+    '/'  shift, and go to state 58
+    '%'  shift, and go to state 59
+
+    $default  reduce using rule 68 (term_tail)
+
+    term_tail  go to state 96
+
+
+State 70
+
+   66 term_tail: '/' factor • term_tail
+
+    '*'  shift, and go to state 57
+    '/'  shift, and go to state 58
+    '%'  shift, and go to state 59
+
+    $default  reduce using rule 68 (term_tail)
+
+    term_tail  go to state 97
+
+
+State 71
+
+   67 term_tail: '%' factor • term_tail
+
+    '*'  shift, and go to state 57
+    '/'  shift, and go to state 58
+    '%'  shift, and go to state 59
+
+    $default  reduce using rule 68 (term_tail)
+
+    term_tail  go to state 98
+
+
+State 72
+
+   19 function_declaration: type IDENTIFIER '(' function_parameters ')' block •
+
+    $default  reduce using rule 19 (function_declaration)
+
+
+State 73
+
+   15 type: IDENTIFIER •
+   38 assignment: IDENTIFIER • '=' expression
+   39           | IDENTIFIER • '=' new_expression
+
+    '='  shift, and go to state 99
+
+    $default  reduce using rule 15 (type)
+
+
+State 74
+
+   40 return_statement: RETURN • ';'
+   41                 | RETURN • expression ';'
+
+    IDENTIFIER  shift, and go to state 35
+    INTEGER     shift, and go to state 36
+    CHARACTER   shift, and go to state 37
+    ';'         shift, and go to state 100
+    '('         shift, and go to state 39
+
+    expression           go to state 101
+    additive_expression  go to state 42
+    term                 go to state 43
+    factor               go to state 44
+
+
+State 75
+
+   42 if_statement: IF • '(' expression ')' block
+   43             | IF • '(' expression ')' block ELSE block
+
+    '('  shift, and go to state 102
+
+
+State 76
+
+   44 while_statement: WHILE • '(' expression ')' block
+
+    '('  shift, and go to state 103
+
+
+State 77
+
+   45 for_statement: FOR • '(' for_initialisation ';' expression ';' for_update ')' block
+
+    '('  shift, and go to state 104
+
+
+State 78
+
+   54 do_statement: DO • block WHILE '(' expression ')' ';'
+
+    '{'  shift, and go to state 62
+
+    block  go to state 105
+
+
+State 79
+
+   57 delete_statement: DELETE • IDENTIFIER
+   58                 | DELETE • '[' ']' IDENTIFIER
+
+    IDENTIFIER  shift, and go to state 106
+    '['         shift, and go to state 107
+
+
+State 80
+
+   16 var_declaration: type • IDENTIFIER ';'
+   17                | type • IDENTIFIER '=' expression ';'
+   18                | type • IDENTIFIER '=' new_expression ';'
+
+    IDENTIFIER  shift, and go to state 108
+
+
+State 81
+
+   29 statement: var_declaration •
+
+    $default  reduce using rule 29 (statement)
+
+
+State 82
+
+   37 statement: block •
+
+    $default  reduce using rule 37 (statement)
+
+
+State 83
+
+   26 block: '{' statement_list • '}'
+
+    '}'  shift, and go to state 109
+
+
+State 84
+
+   27 statement_list: statement • statement_list
+
+    INT         shift, and go to state 17
+    CHAR        shift, and go to state 18
+    IDENTIFIER  shift, and go to state 73
+    RETURN      shift, and go to state 74
+    IF          shift, and go to state 75
+    WHILE       shift, and go to state 76
+    FOR         shift, and go to state 77
+    DO          shift, and go to state 78
+    DELETE      shift, and go to state 79
+    '{'         shift, and go to state 62
+
+    $default  reduce using rule 28 (statement_list)
+
+    type              go to state 80
+    var_declaration   go to state 81
+    block             go to state 82
+    statement_list    go to state 110
+    statement         go to state 84
+    assignment        go to state 85
+    return_statement  go to state 86
+    if_statement      go to state 87
+    while_statement   go to state 88
+    for_statement     go to state 89
+    do_statement      go to state 90
+    delete_statement  go to state 91
+
+
+State 85
+
+   30 statement: assignment • ';'
+
+    ';'  shift, and go to state 111
+
+
+State 86
+
+   31 statement: return_statement •
+
+    $default  reduce using rule 31 (statement)
+
+
+State 87
+
+   32 statement: if_statement •
+
+    $default  reduce using rule 32 (statement)
+
+
+State 88
+
+   33 statement: while_statement •
+
+    $default  reduce using rule 33 (statement)
+
+
+State 89
+
+   34 statement: for_statement •
+
+    $default  reduce using rule 34 (statement)
+
+
+State 90
+
+   35 statement: do_statement •
+
+    $default  reduce using rule 35 (statement)
+
+
+State 91
+
+   36 statement: delete_statement • ';'
+
+    ';'  shift, and go to state 112
+
+
+State 92
+
+   23 parameter_list_tail: ',' parameter parameter_list_tail •
+
+    $default  reduce using rule 23 (parameter_list_tail)
+
+
+State 93
+
+   56 new_expression: NEW type '[' expression • ']'
+
+    ']'  shift, and go to state 113
+
+
+State 94
+
+   61 additive_tail: '+' term additive_tail •
+
+    $default  reduce using rule 61 (additive_tail)
+
+
+State 95
+
+   62 additive_tail: '-' term additive_tail •
+
+    $default  reduce using rule 62 (additive_tail)
+
+
+State 96
+
+   65 term_tail: '*' factor term_tail •
+
+    $default  reduce using rule 65 (term_tail)
+
+
+State 97
+
+   66 term_tail: '/' factor term_tail •
+
+    $default  reduce using rule 66 (term_tail)
+
+
+State 98
+
+   67 term_tail: '%' factor term_tail •
+
+    $default  reduce using rule 67 (term_tail)
+
+
+State 99
+
+   38 assignment: IDENTIFIER '=' • expression
+   39           | IDENTIFIER '=' • new_expression
+
+    IDENTIFIER  shift, and go to state 35
+    INTEGER     shift, and go to state 36
+    CHARACTER   shift, and go to state 37
+    NEW         shift, and go to state 38
+    '('         shift, and go to state 39
+
+    new_expression       go to state 114
+    expression           go to state 115
+    additive_expression  go to state 42
+    term                 go to state 43
+    factor               go to state 44
+
+
+State 100
+
+   40 return_statement: RETURN ';' •
+
+    $default  reduce using rule 40 (return_statement)
+
+
+State 101
+
+   41 return_statement: RETURN expression • ';'
+
+    ';'  shift, and go to state 116
+
+
+State 102
+
+   42 if_statement: IF '(' • expression ')' block
+   43             | IF '(' • expression ')' block ELSE block
+
+    IDENTIFIER  shift, and go to state 35
+    INTEGER     shift, and go to state 36
+    CHARACTER   shift, and go to state 37
+    '('         shift, and go to state 39
+
+    expression           go to state 117
+    additive_expression  go to state 42
+    term                 go to state 43
+    factor               go to state 44
+
+
+State 103
+
+   44 while_statement: WHILE '(' • expression ')' block
+
+    IDENTIFIER  shift, and go to state 35
+    INTEGER     shift, and go to state 36
+    CHARACTER   shift, and go to state 37
+    '('         shift, and go to state 39
+
+    expression           go to state 118
+    additive_expression  go to state 42
+    term                 go to state 43
+    factor               go to state 44
+
+
+State 104
+
+   45 for_statement: FOR '(' • for_initialisation ';' expression ';' for_update ')' block
+
+    INT         shift, and go to state 17
+    CHAR        shift, and go to state 18
+    IDENTIFIER  shift, and go to state 73
+
+    $default  reduce using rule 46 (for_initialisation)
+
+    type                go to state 119
+    assignment          go to state 120
+    for_initialisation  go to state 121
+
+
+State 105
+
+   54 do_statement: DO block • WHILE '(' expression ')' ';'
+
+    WHILE  shift, and go to state 122
+
+
+State 106
+
+   57 delete_statement: DELETE IDENTIFIER •
+
+    $default  reduce using rule 57 (delete_statement)
+
+
+State 107
+
+   58 delete_statement: DELETE '[' • ']' IDENTIFIER
+
+    ']'  shift, and go to state 123
+
+
+State 108
+
+   16 var_declaration: type IDENTIFIER • ';'
+   17                | type IDENTIFIER • '=' expression ';'
+   18                | type IDENTIFIER • '=' new_expression ';'
+
+    ';'  shift, and go to state 29
+    '='  shift, and go to state 30
+
+
+State 109
+
+   26 block: '{' statement_list '}' •
+
+    $default  reduce using rule 26 (block)
+
+
+State 110
+
+   27 statement_list: statement statement_list •
+
+    $default  reduce using rule 27 (statement_list)
+
+
+State 111
+
+   30 statement: assignment ';' •
+
+    $default  reduce using rule 30 (statement)
+
+
+State 112
+
+   36 statement: delete_statement ';' •
+
+    $default  reduce using rule 36 (statement)
+
+
+State 113
+
+   56 new_expression: NEW type '[' expression ']' •
+
+    $default  reduce using rule 56 (new_expression)
+
+
+State 114
+
+   39 assignment: IDENTIFIER '=' new_expression •
+
+    $default  reduce using rule 39 (assignment)
+
+
+State 115
+
+   38 assignment: IDENTIFIER '=' expression •
+
+    $default  reduce using rule 38 (assignment)
+
+
+State 116
+
+   41 return_statement: RETURN expression ';' •
+
+    $default  reduce using rule 41 (return_statement)
+
+
+State 117
+
+   42 if_statement: IF '(' expression • ')' block
+   43             | IF '(' expression • ')' block ELSE block
+
+    ')'  shift, and go to state 124
+
+
+State 118
+
+   44 while_statement: WHILE '(' expression • ')' block
+
+    ')'  shift, and go to state 125
+
+
+State 119
+
+   48 for_initialisation: type • IDENTIFIER '=' expression
+   49                   | type • IDENTIFIER
+
+    IDENTIFIER  shift, and go to state 126
+
+
+State 120
+
+   47 for_initialisation: assignment •
+
+    $default  reduce using rule 47 (for_initialisation)
+
+
+State 121
+
+   45 for_statement: FOR '(' for_initialisation • ';' expression ';' for_update ')' block
+
+    ';'  shift, and go to state 127
+
+
+State 122
+
+   54 do_statement: DO block WHILE • '(' expression ')' ';'
+
+    '('  shift, and go to state 128
+
+
+State 123
+
+   58 delete_statement: DELETE '[' ']' • IDENTIFIER
+
+    IDENTIFIER  shift, and go to state 129
+
+
+State 124
+
+   42 if_statement: IF '(' expression ')' • block
+   43             | IF '(' expression ')' • block ELSE block
+
+    '{'  shift, and go to state 62
+
+    block  go to state 130
+
+
+State 125
+
+   44 while_statement: WHILE '(' expression ')' • block
+
+    '{'  shift, and go to state 62
+
+    block  go to state 131
+
+
+State 126
+
+   48 for_initialisation: type IDENTIFIER • '=' expression
+   49                   | type IDENTIFIER •
+
+    '='  shift, and go to state 132
+
+    $default  reduce using rule 49 (for_initialisation)
+
+
+State 127
+
+   45 for_statement: FOR '(' for_initialisation ';' • expression ';' for_update ')' block
+
+    IDENTIFIER  shift, and go to state 35
+    INTEGER     shift, and go to state 36
+    CHARACTER   shift, and go to state 37
+    '('         shift, and go to state 39
+
+    expression           go to state 133
+    additive_expression  go to state 42
+    term                 go to state 43
+    factor               go to state 44
+
+
+State 128
+
+   54 do_statement: DO block WHILE '(' • expression ')' ';'
+
+    IDENTIFIER  shift, and go to state 35
+    INTEGER     shift, and go to state 36
+    CHARACTER   shift, and go to state 37
+    '('         shift, and go to state 39
+
+    expression           go to state 134
+    additive_expression  go to state 42
+    term                 go to state 43
+    factor               go to state 44
+
+
+State 129
+
+   58 delete_statement: DELETE '[' ']' IDENTIFIER •
+
+    $default  reduce using rule 58 (delete_statement)
+
+
+State 130
+
+   42 if_statement: IF '(' expression ')' block •
+   43             | IF '(' expression ')' block • ELSE block
+
+    ELSE  shift, and go to state 135
+
+    $default  reduce using rule 42 (if_statement)
+
+
+State 131
+
+   44 while_statement: WHILE '(' expression ')' block •
+
+    $default  reduce using rule 44 (while_statement)
+
+
+State 132
+
+   48 for_initialisation: type IDENTIFIER '=' • expression
+
+    IDENTIFIER  shift, and go to state 35
+    INTEGER     shift, and go to state 36
+    CHARACTER   shift, and go to state 37
+    '('         shift, and go to state 39
+
+    expression           go to state 136
+    additive_expression  go to state 42
+    term                 go to state 43
+    factor               go to state 44
+
+
+State 133
+
+   45 for_statement: FOR '(' for_initialisation ';' expression • ';' for_update ')' block
+
+    ';'  shift, and go to state 137
+
+
+State 134
+
+   54 do_statement: DO block WHILE '(' expression • ')' ';'
+
+    ')'  shift, and go to state 138
+
+
+State 135
+
+   43 if_statement: IF '(' expression ')' block ELSE • block
+
+    '{'  shift, and go to state 62
+
+    block  go to state 139
+
+
+State 136
+
+   48 for_initialisation: type IDENTIFIER '=' expression •
+
+    $default  reduce using rule 48 (for_initialisation)
+
+
+State 137
+
+   45 for_statement: FOR '(' for_initialisation ';' expression ';' • for_update ')' block
+
+    IDENTIFIER  shift, and go to state 140
+
+    $default  reduce using rule 50 (for_update)
+
+    assignment  go to state 141
+    for_update  go to state 142
+
+
+State 138
+
+   54 do_statement: DO block WHILE '(' expression ')' • ';'
+
+    ';'  shift, and go to state 143
+
+
+State 139
+
+   43 if_statement: IF '(' expression ')' block ELSE block •
+
+    $default  reduce using rule 43 (if_statement)
+
+
+State 140
+
+   38 assignment: IDENTIFIER • '=' expression
+   39           | IDENTIFIER • '=' new_expression
+   52 for_update: IDENTIFIER • "++"
+   53           | IDENTIFIER • "--"
+
+    '='   shift, and go to state 99
+    "++"  shift, and go to state 144
+    "--"  shift, and go to state 145
+
+
+State 141
+
+   51 for_update: assignment •
+
+    $default  reduce using rule 51 (for_update)
+
+
+State 142
+
+   45 for_statement: FOR '(' for_initialisation ';' expression ';' for_update • ')' block
+
+    ')'  shift, and go to state 146
+
+
+State 143
+
+   54 do_statement: DO block WHILE '(' expression ')' ';' •
+
+    $default  reduce using rule 54 (do_statement)
+
+
+State 144
+
+   52 for_update: IDENTIFIER "++" •
+
+    $default  reduce using rule 52 (for_update)
+
+
+State 145
+
+   53 for_update: IDENTIFIER "--" •
+
+    $default  reduce using rule 53 (for_update)
+
+
+State 146
+
+   45 for_statement: FOR '(' for_initialisation ';' expression ';' for_update ')' • block
+
+    '{'  shift, and go to state 62
+
+    block  go to state 147
+
+
+State 147
+
+   45 for_statement: FOR '(' for_initialisation ';' expression ';' for_update ')' block •
+
+    $default  reduce using rule 45 (for_statement)
