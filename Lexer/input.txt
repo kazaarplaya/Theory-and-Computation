@@ -1,2 +1,4 @@
-int x = 10;
-char name; 
+class Test {
+    public int x = 10;
+    public char name;
+};

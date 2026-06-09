@@ -1,9 +1,16 @@
-KEYWORD      int                  line=1    column=1   
-IDENTIFIER   x                    line=1    column=5   
-OPERATOR     =                    line=1    column=7   
-INTEGER      10                   line=1    column=9   
-DELIMITER    ;                    line=1    column=11  
-KEYWORD      char                 line=2    column=1   
-IDENTIFIER   name                 line=2    column=6   
-DELIMITER    ;                    line=2    column=10  
-EOF                               line=2    column=12  
+KEYWORD      class                line=1    column=1   
+IDENTIFIER   Test                 line=1    column=7   
+DELIMITER    {                    line=1    column=12  
+KEYWORD      public               line=2    column=5   
+KEYWORD      int                  line=2    column=12  
+IDENTIFIER   x                    line=2    column=16  
+OPERATOR     =                    line=2    column=18  
+INTEGER      10                   line=2    column=20  
+DELIMITER    ;                    line=2    column=22  
+KEYWORD      public               line=3    column=5   
+KEYWORD      char                 line=3    column=12  
+IDENTIFIER   name                 line=3    column=17  
+DELIMITER    ;                    line=3    column=21  
+DELIMITER    }                    line=4    column=1   
+DELIMITER    ;                    line=4    column=2   
+EOF                               line=4    column=3   
