@@ -43,12 +43,13 @@ enum class TokenType {
 };
 
 struct Token {
-    TokenType token;
+    std::string token;
     std::string lexeme;
     int line;
     int column;
 };
 
 std::string mapToToken(const std::string& category, const std::string& lexeme);
+int extractNumberAfterEquals(const std::string& text);
 
 #endif
