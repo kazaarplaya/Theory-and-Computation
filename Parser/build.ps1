@@ -1,0 +1,1 @@
+g++ -std=c++17 -Wall -Wextra -pedantic src\main.cpp src\parser.cpp -o parser.exe
