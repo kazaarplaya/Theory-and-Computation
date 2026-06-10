@@ -510,8 +510,14 @@ TokenType tokenTypeFromName(const std::string& name) {
     };
 
     const auto found = tokens.find(name);
-    if (found != tokens.end()) return found->second;
+    if (found != tokens.end()){
+        return found->second;
+    }
+
     const auto upperFound = tokens.find(upper(name));
-    if (upperFound != tokens.end()) return upperFound->second;
+    if (upperFound != tokens.end()) {
+        return upperFound->second;
+    }
+    
     throw std::invalid_argument("Unknown token type: " + name);
 }

@@ -39,17 +39,19 @@ enum class TokenType {
     Percent,
     PlusPlus,
     MinusMinus,
-    EndOfInput
+    EndOfInput,
+    Unknown
 };
 
 struct Token {
-    std::string token;
+    TokenType type;
     std::string lexeme;
     int line;
     int column;
 };
 
-std::string mapToToken(const std::string& category, const std::string& lexeme);
+TokenType mapToToken(const std::string& category, const std::string& lexeme);
+std::string tokenTypeToString(TokenType type);
 int extractNumberAfterEquals(const std::string& text);
 
 #endif

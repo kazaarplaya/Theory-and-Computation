@@ -12,7 +12,7 @@ std::vector<Token> readTokensFromLexer(const std::string& filename){
 
     if (!inputFile) {
         std::cerr << "[ERROR] Could not open input file!" << std::endl;
-        return;
+        return tokens;
     }
 
     std::string line;
@@ -38,7 +38,7 @@ std::vector<Token> readTokensFromLexer(const std::string& filename){
         }
         
         Token token;
-        token.token = mapToToken(category, lexeme);
+        token.type = mapToToken(category, lexeme);
         token.lexeme = lexeme;
         token.line = extractNumberAfterEquals(lineSection);
         token.column = extractNumberAfterEquals(colSection);
@@ -60,7 +60,13 @@ int main(int argc, char* argv[]){
     std::string filename = argv[1];
     std::vector<Token> tokens = readTokensFromLexer(filename);
 
-    // iterate through tokens?
 
-
+    // Test
+    for (const Token& token : tokens) {
+        std::cout << tokenTypeToString(token.type)
+                  << " " << token.lexeme
+                  << " line=" << token.line
+                  << " col=" << token.column
+                  << std::endl;
+    }
 }
