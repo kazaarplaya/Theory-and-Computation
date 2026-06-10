@@ -68,7 +68,7 @@ struct LR1Parser::Impl {
         buildTables();
     }
 
-    void addRule(const std::string& lhs, std::initializer_list<const char*> rhs) {
+    void addGrammarRule(const std::string& lhs, std::initializer_list<const char*> rhs) {
         Rule rule;
         rule.lhs = lhs;
         for (const char* symbol : rhs) {
@@ -79,79 +79,79 @@ struct LR1Parser::Impl {
     }
 
     void buildGrammar() {
-        addRule(Start, {"Program"});
-        addRule("Program", {"ClassDeclarationList"});
-        addRule("ClassDeclarationList", {"ClassDeclaration", "ClassDeclarationList"});
-        addRule("ClassDeclarationList", {});
-        addRule("ClassDeclaration", {"class", "identifier", "{", "MemberList", "}", ";"});
-        addRule("MemberList", {"MemberDeclaration", "MemberList"});
-        addRule("MemberList", {});
-        addRule("MemberDeclaration", {"Visibility", "VarDeclaration"});
-        addRule("MemberDeclaration", {"Visibility", "FunctionDeclaration"});
-        addRule("MemberDeclaration", {"Visibility", "ClassDeclaration"});
-        addRule("Visibility", {"public"});
-        addRule("Visibility", {"private"});
-        addRule("Visibility", {"protected"});
-        addRule("Type", {"int"});
-        addRule("Type", {"char"});
-        addRule("Type", {"identifier"});
-        addRule("VarDeclaration", {"Type", "identifier", ";"});
-        addRule("VarDeclaration", {"Type", "identifier", "=", "Expression", ";"});
-        addRule("VarDeclaration", {"Type", "identifier", "=", "NewExpression", ";"});
-        addRule("FunctionDeclaration", {"Type", "identifier", "(", "FunctionParameters", ")", "Block"});
-        addRule("FunctionDeclaration", {"void", "identifier", "(", "FunctionParameters", ")", "Block"});
-        addRule("FunctionParameters", {"Parameter", "ParameterListTail"});
-        addRule("FunctionParameters", {});
-        addRule("ParameterListTail", {",", "Parameter", "ParameterListTail"});
-        addRule("ParameterListTail", {});
-        addRule("Parameter", {"Type", "identifier"});
-        addRule("Block", {"{", "StatementList", "}"});
-        addRule("StatementList", {"Statement", "StatementList"});
-        addRule("StatementList", {});
-        addRule("Statement", {"VarDeclaration"});
-        addRule("Statement", {"Assignment", ";"});
-        addRule("Statement", {"ReturnStatement"});
-        addRule("Statement", {"IfStatement"});
-        addRule("Statement", {"WhileStatement"});
-        addRule("Statement", {"ForStatement"});
-        addRule("Statement", {"DoStatement"});
-        addRule("Statement", {"DeleteStatement", ";"});
-        addRule("Statement", {"Block"});
-        addRule("Assignment", {"identifier", "=", "Expression"});
-        addRule("Assignment", {"identifier", "=", "NewExpression"});
-        addRule("ReturnStatement", {"return", ";"});
-        addRule("ReturnStatement", {"return", "Expression", ";"});
-        addRule("IfStatement", {"if", "(", "Expression", ")", "Block"});
-        addRule("IfStatement", {"if", "(", "Expression", ")", "Block", "else", "Block"});
-        addRule("WhileStatement", {"while", "(", "Expression", ")", "Block"});
-        addRule("ForStatement", {"for", "(", "ForInitialisation", ";", "Expression", ";", "ForUpdate", ")", "Block"});
-        addRule("ForInitialisation", {});
-        addRule("ForInitialisation", {"Assignment"});
-        addRule("ForInitialisation", {"Type", "identifier", "=", "Expression"});
-        addRule("ForInitialisation", {"Type", "identifier"});
-        addRule("ForUpdate", {});
-        addRule("ForUpdate", {"Assignment"});
-        addRule("ForUpdate", {"identifier", "++"});
-        addRule("ForUpdate", {"identifier", "--"});
-        addRule("DoStatement", {"do", "Block", "while", "(", "Expression", ")", ";"});
-        addRule("NewExpression", {"new", "Type"});
-        addRule("NewExpression", {"new", "Type", "[", "Expression", "]"});
-        addRule("DeleteStatement", {"delete", "identifier"});
-        addRule("DeleteStatement", {"delete", "[", "]", "identifier"});
-        addRule("Expression", {"AdditiveExpression"});
-        addRule("AdditiveExpression", {"Term", "AdditiveTail"});
-        addRule("AdditiveTail", {"+", "Term", "AdditiveTail"});
-        addRule("AdditiveTail", {"-", "Term", "AdditiveTail"});
-        addRule("AdditiveTail", {});
-        addRule("Term", {"Factor", "TermTail"});
-        addRule("TermTail", {"*", "Factor", "TermTail"});
-        addRule("TermTail", {"/", "Factor", "TermTail"});
-        addRule("TermTail", {"%", "Factor", "TermTail"});
-        addRule("TermTail", {});
-        addRule("Factor", {"identifier"});
-        addRule("Factor", {"integer"});
-        addRule("Factor", {"character"});
-        addRule("Factor", {"(", "Expression", ")"});
+        addGrammarRule(Start, {"Program"});
+        addGrammarRule("Program", {"ClassDeclarationList"});
+        addGrammarRule("ClassDeclarationList", {"ClassDeclaration", "ClassDeclarationList"});
+        addGrammarRule("ClassDeclarationList", {});
+        addGrammarRule("ClassDeclaration", {"class", "identifier", "{", "MemberList", "}", ";"});
+        addGrammarRule("MemberList", {"MemberDeclaration", "MemberList"});
+        addGrammarRule("MemberList", {});
+        addGrammarRule("MemberDeclaration", {"Visibility", "VarDeclaration"});
+        addGrammarRule("MemberDeclaration", {"Visibility", "FunctionDeclaration"});
+        addGrammarRule("MemberDeclaration", {"Visibility", "ClassDeclaration"});
+        addGrammarRule("Visibility", {"public"});
+        addGrammarRule("Visibility", {"private"});
+        addGrammarRule("Visibility", {"protected"});
+        addGrammarRule("Type", {"int"});
+        addGrammarRule("Type", {"char"});
+        addGrammarRule("Type", {"identifier"});
+        addGrammarRule("VarDeclaration", {"Type", "identifier", ";"});
+        addGrammarRule("VarDeclaration", {"Type", "identifier", "=", "Expression", ";"});
+        addGrammarRule("VarDeclaration", {"Type", "identifier", "=", "NewExpression", ";"});
+        addGrammarRule("FunctionDeclaration", {"Type", "identifier", "(", "FunctionParameters", ")", "Block"});
+        addGrammarRule("FunctionDeclaration", {"void", "identifier", "(", "FunctionParameters", ")", "Block"});
+        addGrammarRule("FunctionParameters", {"Parameter", "ParameterListTail"});
+        addGrammarRule("FunctionParameters", {});
+        addGrammarRule("ParameterListTail", {",", "Parameter", "ParameterListTail"});
+        addGrammarRule("ParameterListTail", {});
+        addGrammarRule("Parameter", {"Type", "identifier"});
+        addGrammarRule("Block", {"{", "StatementList", "}"});
+        addGrammarRule("StatementList", {"Statement", "StatementList"});
+        addGrammarRule("StatementList", {});
+        addGrammarRule("Statement", {"VarDeclaration"});
+        addGrammarRule("Statement", {"Assignment", ";"});
+        addGrammarRule("Statement", {"ReturnStatement"});
+        addGrammarRule("Statement", {"IfStatement"});
+        addGrammarRule("Statement", {"WhileStatement"});
+        addGrammarRule("Statement", {"ForStatement"});
+        addGrammarRule("Statement", {"DoStatement"});
+        addGrammarRule("Statement", {"DeleteStatement", ";"});
+        addGrammarRule("Statement", {"Block"});
+        addGrammarRule("Assignment", {"identifier", "=", "Expression"});
+        addGrammarRule("Assignment", {"identifier", "=", "NewExpression"});
+        addGrammarRule("ReturnStatement", {"return", ";"});
+        addGrammarRule("ReturnStatement", {"return", "Expression", ";"});
+        addGrammarRule("IfStatement", {"if", "(", "Expression", ")", "Block"});
+        addGrammarRule("IfStatement", {"if", "(", "Expression", ")", "Block", "else", "Block"});
+        addGrammarRule("WhileStatement", {"while", "(", "Expression", ")", "Block"});
+        addGrammarRule("ForStatement", {"for", "(", "ForInitialisation", ";", "Expression", ";", "ForUpdate", ")", "Block"});
+        addGrammarRule("ForInitialisation", {});
+        addGrammarRule("ForInitialisation", {"Assignment"});
+        addGrammarRule("ForInitialisation", {"Type", "identifier", "=", "Expression"});
+        addGrammarRule("ForInitialisation", {"Type", "identifier"});
+        addGrammarRule("ForUpdate", {});
+        addGrammarRule("ForUpdate", {"Assignment"});
+        addGrammarRule("ForUpdate", {"identifier", "++"});
+        addGrammarRule("ForUpdate", {"identifier", "--"});
+        addGrammarRule("DoStatement", {"do", "Block", "while", "(", "Expression", ")", ";"});
+        addGrammarRule("NewExpression", {"new", "Type"});
+        addGrammarRule("NewExpression", {"new", "Type", "[", "Expression", "]"});
+        addGrammarRule("DeleteStatement", {"delete", "identifier"});
+        addGrammarRule("DeleteStatement", {"delete", "[", "]", "identifier"});
+        addGrammarRule("Expression", {"AdditiveExpression"});
+        addGrammarRule("AdditiveExpression", {"Term", "AdditiveTail"});
+        addGrammarRule("AdditiveTail", {"+", "Term", "AdditiveTail"});
+        addGrammarRule("AdditiveTail", {"-", "Term", "AdditiveTail"});
+        addGrammarRule("AdditiveTail", {});
+        addGrammarRule("Term", {"Factor", "TermTail"});
+        addGrammarRule("TermTail", {"*", "Factor", "TermTail"});
+        addGrammarRule("TermTail", {"/", "Factor", "TermTail"});
+        addGrammarRule("TermTail", {"%", "Factor", "TermTail"});
+        addGrammarRule("TermTail", {});
+        addGrammarRule("Factor", {"identifier"});
+        addGrammarRule("Factor", {"integer"});
+        addGrammarRule("Factor", {"character"});
+        addGrammarRule("Factor", {"(", "Expression", ")"});
 
         for (const Rule& rule : rules) {
             for (const std::string& symbol : rule.rhs) {
@@ -518,6 +518,6 @@ TokenType tokenTypeFromName(const std::string& name) {
     if (upperFound != tokens.end()) {
         return upperFound->second;
     }
-    
+
     throw std::invalid_argument("Unknown token type: " + name);
 }

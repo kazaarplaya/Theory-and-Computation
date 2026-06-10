@@ -1,5 +1,26 @@
 #include "parser.h"
 
+#include <string>
+#include <vector>
+#include <set>
+
+class Rule {
+    public:
+        Rule(std::string lhs, std::vector<std::string> rhs);
+
+        const std::string& getLHS() const {
+            return lhs;
+        };
+
+        const std::vector<std::string>& getRHS() const {
+            return rhs;
+        };
+
+    private:
+        std::string lhs;
+        std::vector<std::string> rhs;
+};
+
 TokenType mapToToken(const std::string& category, const std::string& lexeme) {
     if (category == "KEYWORD") {
         if (lexeme == "int") return TokenType::Int;
@@ -101,3 +122,111 @@ int extractNumberAfterEquals(const std::string& text) {
 
     return std::stoi(text.substr(pos + 1));
 }
+
+class Parser {
+    public:
+        Parser(const std::vector<Token> tokens);
+
+    private:
+        const std::vector<Token> tokens;
+        std::vector<Rule> grammarRules;
+        std::set<std::string> terminals;
+        std::set<std::string> nonTerminals;
+
+        void buildGrammar(){
+            addGrammarRule("S'", {"Program"});
+            addGrammarRule("Program", {"ClassDeclarationList"});
+            addGrammarRule("ClassDeclarationList", {"ClassDeclaration", "ClassDeclarationList"});
+            addGrammarRule("ClassDeclarationList", {});
+            addGrammarRule("ClassDeclaration", {"class", "identifier", "{", "MemberList", "}", ";"});
+            addGrammarRule("MemberList", {"MemberDeclaration", "MemberList"});
+            addGrammarRule("MemberList", {});
+            addGrammarRule("MemberDeclaration", {"Visibility", "VarDeclaration"});
+            addGrammarRule("MemberDeclaration", {"Visibility", "FunctionDeclaration"});
+            addGrammarRule("MemberDeclaration", {"Visibility", "ClassDeclaration"});
+            addGrammarRule("Visibility", {"public"});
+            addGrammarRule("Visibility", {"private"});
+            addGrammarRule("Visibility", {"protected"});
+            addGrammarRule("Type", {"int"});
+            addGrammarRule("Type", {"char"});
+            addGrammarRule("Type", {"identifier"});
+            addGrammarRule("VarDeclaration", {"Type", "identifier", ";"});
+            addGrammarRule("VarDeclaration", {"Type", "identifier", "=", "Expression", ";"});
+            addGrammarRule("VarDeclaration", {"Type", "identifier", "=", "NewExpression", ";"});
+            addGrammarRule("FunctionDeclaration", {"Type", "identifier", "(", "FunctionParameters", ")", "Block"});
+            addGrammarRule("FunctionDeclaration", {"void", "identifier", "(", "FunctionParameters", ")", "Block"});
+            addGrammarRule("FunctionParameters", {"Parameter", "ParameterListTail"});
+            addGrammarRule("FunctionParameters", {});
+            addGrammarRule("ParameterListTail", {",", "Parameter", "ParameterListTail"});
+            addGrammarRule("ParameterListTail", {});
+            addGrammarRule("Parameter", {"Type", "identifier"});
+            addGrammarRule("Block", {"{", "StatementList", "}"});
+            addGrammarRule("StatementList", {"Statement", "StatementList"});
+            addGrammarRule("StatementList", {});
+            addGrammarRule("Statement", {"VarDeclaration"});
+            addGrammarRule("Statement", {"Assignment", ";"});
+            addGrammarRule("Statement", {"ReturnStatement"});
+            addGrammarRule("Statement", {"IfStatement"});
+            addGrammarRule("Statement", {"WhileStatement"});
+            addGrammarRule("Statement", {"ForStatement"});
+            addGrammarRule("Statement", {"DoStatement"});
+            addGrammarRule("Statement", {"DeleteStatement", ";"});
+            addGrammarRule("Statement", {"Block"});
+            addGrammarRule("Assignment", {"identifier", "=", "Expression"});
+            addGrammarRule("Assignment", {"identifier", "=", "NewExpression"});
+            addGrammarRule("ReturnStatement", {"return", ";"});
+            addGrammarRule("ReturnStatement", {"return", "Expression", ";"});
+            addGrammarRule("IfStatement", {"if", "(", "Expression", ")", "Block"});
+            addGrammarRule("IfStatement", {"if", "(", "Expression", ")", "Block", "else", "Block"});
+            addGrammarRule("WhileStatement", {"while", "(", "Expression", ")", "Block"});
+            addGrammarRule("ForStatement", {"for", "(", "ForInitialisation", ";", "Expression", ";", "ForUpdate", ")", "Block"});
+            addGrammarRule("ForInitialisation", {});
+            addGrammarRule("ForInitialisation", {"Assignment"});
+            addGrammarRule("ForInitialisation", {"Type", "identifier", "=", "Expression"});
+            addGrammarRule("ForInitialisation", {"Type", "identifier"});
+            addGrammarRule("ForUpdate", {});
+            addGrammarRule("ForUpdate", {"Assignment"});
+            addGrammarRule("ForUpdate", {"identifier", "++"});
+            addGrammarRule("ForUpdate", {"identifier", "--"});
+            addGrammarRule("DoStatement", {"do", "Block", "while", "(", "Expression", ")", ";"});
+            addGrammarRule("NewExpression", {"new", "Type"});
+            addGrammarRule("NewExpression", {"new", "Type", "[", "Expression", "]"});
+            addGrammarRule("DeleteStatement", {"delete", "identifier"});
+            addGrammarRule("DeleteStatement", {"delete", "[", "]", "identifier"});
+            addGrammarRule("Expression", {"AdditiveExpression"});
+            addGrammarRule("AdditiveExpression", {"Term", "AdditiveTail"});
+            addGrammarRule("AdditiveTail", {"+", "Term", "AdditiveTail"});
+            addGrammarRule("AdditiveTail", {"-", "Term", "AdditiveTail"});
+            addGrammarRule("AdditiveTail", {});
+            addGrammarRule("Term", {"Factor", "TermTail"});
+            addGrammarRule("TermTail", {"*", "Factor", "TermTail"});
+            addGrammarRule("TermTail", {"/", "Factor", "TermTail"});
+            addGrammarRule("TermTail", {"%", "Factor", "TermTail"});
+            addGrammarRule("TermTail", {});
+            addGrammarRule("Factor", {"identifier"});
+            addGrammarRule("Factor", {"integer"});
+            addGrammarRule("Factor", {"character"});
+            addGrammarRule("Factor", {"(", "Expression", ")"});
+
+            // insert terminals
+            for (const Rule& rule : grammarRules) {
+                for (const std::string& symbol : rule.getRHS()) {
+                    // If symbol is not a non-terminal, it is a terminal
+                    if (nonTerminals.count(symbol) == 0) {
+                        terminals.insert(symbol);
+                    }
+                }
+            }
+            
+            // add end terminal
+            terminals.insert("$");
+        }
+
+        void addGrammarRule(const std::string& lhs, const std::vector<std::string>& rhs){
+            Rule rule(lhs, rhs);
+            
+            // add to rules and add lhs to nonterminals
+            grammarRules.push_back(rule);
+            nonTerminals.insert(lhs);
+        }
+};
