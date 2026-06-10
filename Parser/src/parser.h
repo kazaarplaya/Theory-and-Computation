@@ -53,6 +53,15 @@ struct Token {
     int column;
 };
 
+struct ParseNode {
+    std::string name;
+    std::string lexeme;
+    std::vector<ParseNode> children;
+
+    ParseNode(std::string name, std::string lexeme = "")
+        : name(name), lexeme(lexeme) {}
+};
+
 enum class ActionType {
     SHIFT,
     REDUCE,
@@ -89,6 +98,7 @@ class Parser {
     public:
         Parser(const std::vector<Token>& tokens);
         void parse();
+        void printTree(const ParseNode& node, std::ostream& out, int indent = 0) const;
 
     private:
         const std::vector<Token> tokens;

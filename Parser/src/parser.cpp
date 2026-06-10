@@ -4,6 +4,7 @@
 #include <vector>
 #include <set>
 #include <map>
+#include <algorithm>
 
 Rule::Rule(std::string lhs, std::vector<std::string> rhs)
     : lhs(lhs), rhs(rhs) {}
@@ -625,6 +626,7 @@ Action Parser::getAction(int state, TokenType type){
 
 void Parser::parse() {
     std::vector<int> stateStack;
+    std::vector<ParseNode> nodeStack;
 
     stateStack.push_back(0);
 
@@ -639,6 +641,10 @@ void Parser::parse() {
 
         if (action.action == ActionType::SHIFT){
             stateStack.push_back(action.value);
+            if (tokenPosition < tokens.size()) {
+                const Token& shiftedToken = tokens[tokenPosition];
+                nodeStack.push_back(ParseNode(tokenTypeToString(shiftedToken.type), shiftedToken.lexeme));
+            }
             tokenPosition++;
         } 
 
@@ -647,8 +653,11 @@ void Parser::parse() {
 
             // Determine how many RHS symbols to reduce/pop
             int rhsSize = rule.getRHS().size();
+            std::vector<ParseNode> children;
             for (int i = 0; i < rhsSize; ++i){
                 stateStack.pop_back();
+                children.push_back(nodeStack.back());
+                nodeStack.pop_back();
             }
             
             // Get currente state and lhs
@@ -658,10 +667,23 @@ void Parser::parse() {
             // Identify next state and add to stack
             int nextState = gotoTable[{currentState, lhs}];
             stateStack.push_back(nextState);
+
+            std::reverse(children.begin(), children.end());
+            ParseNode parent(lhs);
+            if (children.empty()) {
+                parent.children.push_back(ParseNode("epsilon"));
+            } else {
+                parent.children = children;
+            }
+            nodeStack.push_back(parent);
         }
 
         if (action.action == ActionType::ACCEPT){
             std::cout << "Parse successful!" << std::endl;
+            if (!nodeStack.empty()) {
+                std::cout << "Parse tree:" << std::endl;
+                printTree(nodeStack.front(), std::cout);
+            }
             return;
         }
 
@@ -679,5 +701,17 @@ void Parser::parse() {
                     << std::endl;
             return;
         }
+    }
+}
+
+void Parser::printTree(const ParseNode& node, std::ostream& out, int indent) const {
+    out << std::string(indent, ' ') << node.name;
+    if (!node.lexeme.empty()) {
+        out << " (" << node.lexeme << ")";
+    }
+    out << '\n';
+
+    for (const ParseNode& child : node.children) {
+        printTree(child, out, indent + 2);
     }
 }
