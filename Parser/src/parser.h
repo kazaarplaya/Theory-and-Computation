@@ -3,6 +3,9 @@
 
 #include <string>
 #include <iostream>
+#include <vector>
+#include <set>
+#include <map>
 
 enum class TokenType {
     Class,
@@ -48,6 +51,59 @@ struct Token {
     std::string lexeme;
     int line;
     int column;
+};
+
+enum class ActionType {
+    SHIFT,
+    REDUCE,
+    ACCEPT,
+    ERROR
+};
+
+struct Action {
+    ActionType action;
+    int value;
+
+    Action() : action(ActionType::ERROR), value(-1) {}
+    Action(ActionType type, int value): action(type), value(value) {}
+};
+
+class Rule {
+    public:
+        Rule(std::string lhs, std::vector<std::string> rhs);
+
+        const std::string& getLHS() const {
+            return lhs;
+        }
+
+        const std::vector<std::string>& getRHS() const {
+            return rhs;
+        }
+
+    private:
+        std::string lhs;
+        std::vector<std::string> rhs;
+};
+
+class Parser {
+    public:
+        Parser(const std::vector<Token>& tokens);
+        void parse();
+
+    private:
+        const std::vector<Token> tokens;
+        std::vector<Rule> grammarRules;
+        std::set<std::string> terminals;
+        std::set<std::string> nonTerminals;
+
+        std::map<std::pair<int, TokenType>, Action> actionTable;
+        std::map<std::pair<int, std::string>, int> gotoTable;
+        std::map<int, Action> defaultActions;
+
+        void buildGrammar();
+        void addGrammarRule(const std::string& lhs, const std::vector<std::string>& rhs);
+        void buildParsingTable();
+        Action getAction(int state, TokenType type);
 };
 
 TokenType mapToToken(const std::string& category, const std::string& lexeme);

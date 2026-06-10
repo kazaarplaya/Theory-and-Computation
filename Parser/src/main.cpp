@@ -60,13 +60,15 @@ int main(int argc, char* argv[]){
     std::string filename = argv[1];
     std::vector<Token> tokens = readTokensFromLexer(filename);
 
+    Parser parser = Parser(tokens);
+    parser.parse();
 
     // Test
-    for (const Token& token : tokens) {
-        std::cout << tokenTypeToString(token.type)
-                  << " " << token.lexeme
-                  << " line=" << token.line
-                  << " col=" << token.column
-                  << std::endl;
-    }
+    // for (const Token& token : tokens) {
+    //     std::cout << tokenTypeToString(token.type)
+    //               << " " << token.lexeme
+    //               << " line=" << token.line
+    //               << " col=" << token.column
+    //               << std::endl;
+    // }
 }
