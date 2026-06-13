@@ -51,24 +51,19 @@ std::vector<Token> readTokensFromLexer(const std::string& filename){
 }
 
 int main(int argc, char* argv[]){
+
+    // Check number of line arguments
     if (argc < 2) {
         std::cerr << "Error: Missing input file name.\n";
         std::cerr << "Usage: " << argv[0] << " <filename>\n";
         return 1; 
     }
 
+    // Load file name and create tokens from input file
     std::string filename = argv[1];
     std::vector<Token> tokens = readTokensFromLexer(filename);
 
+    // Feed tokens into parser and parse
     Parser parser = Parser(tokens);
     parser.parse();
-
-    // Test
-    // for (const Token& token : tokens) {
-    //     std::cout << tokenTypeToString(token.type)
-    //               << " " << token.lexeme
-    //               << " line=" << token.line
-    //               << " col=" << token.column
-    //               << std::endl;
-    // }
 }

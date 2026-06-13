@@ -79,22 +79,20 @@ std::string tokenTypeToString(TokenType type) {
         case TokenType::Do: return "DO";
         case TokenType::New: return "NEW";
         case TokenType::Delete: return "DELETE";
-        case TokenType::LeftBrace: return "{";
-        case TokenType::RightBrace: return "}";
-        case TokenType::LeftParen: return "(";
-        case TokenType::RightParen: return ")";
-        case TokenType::LeftBracket: return "[";
-        case TokenType::RightBracket: return "]";
-        case TokenType::Semicolon: return ";";
-        case TokenType::Comma: return ",";
+        case TokenType::LeftBrace: return "LEFTBRACE";
+        case TokenType::RightBrace: return "RIGHTBRACE";
+        case TokenType::LeftParen: return "LEFTPAREN";
+        case TokenType::RightParen: return "RIGHPAREN";
+        case TokenType::LeftBracket: return "LEFTBRACKET";
+        case TokenType::RightBracket: return "RIGHTBRACKET";
+        case TokenType::Semicolon: return "SEMICOLON";
+        case TokenType::Comma: return "COMMA";
         case TokenType::Assign: return "=";
         case TokenType::Plus: return "+";
         case TokenType::Minus: return "-";
         case TokenType::Star: return "*";
         case TokenType::Slash: return "/";
         case TokenType::Percent: return "%";
-        case TokenType::PlusPlus: return "++";
-        case TokenType::MinusMinus: return "--";
         case TokenType::EndOfInput: return "$end";
         case TokenType::Unknown: return "UNKNOWN";
     }
@@ -208,7 +206,7 @@ void Parser::buildGrammar(){
 void Parser::addGrammarRule(const std::string& lhs, const std::vector<std::string>& rhs){
     Rule rule(lhs, rhs);
 
-    // add to rules and add lhs to nonterminals
+    // Add to rule to grammarRules and add LHS to nonterminals
     grammarRules.push_back(rule);
     nonTerminals.insert(lhs);
 }
@@ -634,6 +632,8 @@ void Parser::parse() {
     while (true){
         int state = stateStack.back();
         TokenType tokenType = TokenType::EndOfInput;
+
+        // Check if token is not the last
         if (tokenPosition < tokens.size()) {
             tokenType = tokens[tokenPosition].type;
         }
