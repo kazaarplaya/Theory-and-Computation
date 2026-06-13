@@ -40,8 +40,6 @@ enum class TokenType {
     Star,
     Slash,
     Percent,
-    PlusPlus,
-    MinusMinus,
     EndOfInput,
     Unknown
 };

@@ -128,8 +128,6 @@ for_initialisation:
 for_update:
     /* empty */
     | assignment
-    | IDENTIFIER "++"
-    | IDENTIFIER "--"
     ;
 
 do_statement:
