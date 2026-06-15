@@ -1,7 +1,5 @@
 # Parser
 
-This project contains a C++ LR-style parser. It reads tokenised lexer output from a text file, parses the token stream, prints the parse tree, and writes the parse tree to `output.txt` when parsing succeeds.
-
 ## Requirements
 
 - C++ compiler with C++17 support
@@ -26,12 +24,6 @@ Test input files are stored in:
 
 ```text
 tests/inputs/
-```
-
-Grammar and Bison-related files are stored in:
-
-```text
-grammar/
 ```
 
 ## Run On macOS / Linux
@@ -75,20 +67,8 @@ output.txt
 
 For invalid input, the parser prints a syntax error to stderr and exits with code `1`.
 
-## Unit Tests On macOS / Linux
 
-Run:
-
-```bash
-./run_unit_tests_mac.sh
-```
-
-Saved test results are written to:
-
-```text
-unit_test_outputs/
-```
-
+## Testing
 Successful tests keep only their parse-tree output files:
 
 ```text
