@@ -1,5 +1,6 @@
 #include "parser.h"
 
+#include <fstream>
 #include <iostream>
 #include <sstream>
 #include <string>
@@ -49,6 +50,13 @@ int main() {
         }
 
         parser.printTree(*result.tree, std::cout);
+
+        std::ofstream outputFile("output.txt");
+        if (!outputFile) {
+            std::cerr << "Could not open output.txt for writing\n";
+            return 1;
+        }
+        parser.printTree(*result.tree, outputFile);
         return 0;
     } catch (const std::exception& error) {
         std::cerr << error.what() << '\n';

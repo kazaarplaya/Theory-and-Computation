@@ -5,6 +5,7 @@
 #include <set>
 #include <map>
 #include <algorithm>
+#include <fstream>
 
 Rule::Rule(std::string lhs, std::vector<std::string> rhs)
     : lhs(lhs), rhs(rhs) {}
@@ -675,6 +676,14 @@ void Parser::parse() {
             if (!nodeStack.empty()) {
                 std::cout << "Parse tree:" << std::endl;
                 printTree(nodeStack.front(), std::cout);
+
+                std::ofstream outputFile("output.txt");
+                if (!outputFile) {
+                    std::cerr << "[ERROR] Could not open output.txt for writing!" << std::endl;
+                    return;
+                }
+                outputFile << "Parse tree:" << std::endl;
+                printTree(nodeStack.front(), outputFile);
             }
             return;
         }
