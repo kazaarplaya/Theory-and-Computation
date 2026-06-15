@@ -1,0 +1,5 @@
+KEYWORD class line=1 col=1
+DELIMITER { line=1 col=7
+DELIMITER } line=1 col=8
+DELIMITER ; line=1 col=9
+EOF line=1 col=10

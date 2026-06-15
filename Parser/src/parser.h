@@ -95,7 +95,8 @@ class Rule {
 class Parser {
     public:
         Parser(const std::vector<Token>& tokens);
-        void parse();
+        // Returns true when parsing succeeds and false when a syntax error occurs.
+        bool parse();
         void printTree(const ParseNode& node, std::ostream& out, int indent = 0) const;
 
     private:

@@ -1,0 +1,66 @@
+Parse tree:
+Program
+  ClassDeclarationList
+    ClassDeclaration
+      CLASS (class)
+      IDENTIFIER (A)
+      LEFTBRACE ({)
+      MemberList
+        MemberDeclaration
+          Visibility
+            PUBLIC (public)
+          FunctionDeclaration
+            VOID (void)
+            IDENTIFIER (f)
+            LEFTPAREN (()
+            FunctionParameters
+              epsilon
+            RIGHPAREN ())
+            Block
+              LEFTBRACE ({)
+              StatementList
+                Statement
+                  ForStatement
+                    FOR (for)
+                    LEFTPAREN (()
+                    ForInitialisation
+                      epsilon
+                    SEMICOLON (;)
+                    Expression
+                      AdditiveExpression
+                        Term
+                          Factor
+                            INTEGER (1)
+                          TermTail
+                            epsilon
+                        AdditiveTail
+                          epsilon
+                    SEMICOLON (;)
+                    ForUpdate
+                      Assignment
+                        IDENTIFIER (i)
+                        = (=)
+                        Expression
+                          AdditiveExpression
+                            Term
+                              Factor
+                                INTEGER (1)
+                              TermTail
+                                epsilon
+                            AdditiveTail
+                              epsilon
+                    RIGHPAREN ())
+                    Block
+                      LEFTBRACE ({)
+                      StatementList
+                        epsilon
+                      RIGHTBRACE (})
+                StatementList
+                  epsilon
+              RIGHTBRACE (})
+        MemberList
+          epsilon
+      RIGHTBRACE (})
+      SEMICOLON (;)
+    ClassDeclarationList
+      epsilon

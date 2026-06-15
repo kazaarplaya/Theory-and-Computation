@@ -1,0 +1,1 @@
+Syntax error at token '{' on line 1, column 7

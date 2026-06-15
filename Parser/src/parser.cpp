@@ -10,6 +10,7 @@
 Rule::Rule(std::string lhs, std::vector<std::string> rhs)
     : lhs(lhs), rhs(rhs) {}
 
+// Converts lexer token categories and lexemes into the parser's token enum.
 TokenType mapToToken(const std::string& category, const std::string& lexeme) {
     if (category == "KEYWORD") {
         if (lexeme == "int") return TokenType::Int;
@@ -58,6 +59,7 @@ TokenType mapToToken(const std::string& category, const std::string& lexeme) {
     return TokenType::Unknown;
 }
 
+// Gives parse-tree leaves a readable label when they are printed.
 std::string tokenTypeToString(TokenType type) {
     switch (type) {
         case TokenType::Class: return "CLASS";
@@ -99,6 +101,7 @@ std::string tokenTypeToString(TokenType type) {
     return "UNKNOWN";
 }
 
+// Extracts the number from fields such as "line=3" or "col=12".
 int extractNumberAfterEquals(const std::string& text) {
     size_t pos = text.find('=');
     if (pos == std::string::npos) {
@@ -113,6 +116,7 @@ Parser::Parser(const std::vector<Token>& tokens): tokens(tokens) {
     buildParsingTable();
 };
 
+// Stores the grammar rules used by the parser and derives the terminal set.
 void Parser::buildGrammar(){
     addGrammarRule("S'", {"Program"});
     addGrammarRule("Program", {"ClassDeclarationList"});
@@ -186,28 +190,28 @@ void Parser::buildGrammar(){
     addGrammarRule("Factor", {"character"});
     addGrammarRule("Factor", {"(", "Expression", ")"});
 
-    // insert terminals
+    // Anything that appears on a RHS but is not a non-terminal is treated as a terminal.
     for (const Rule& rule : grammarRules) {
         for (const std::string& symbol : rule.getRHS()) {
-            // If symbol is not a non-terminal, it is a terminal
             if (nonTerminals.count(symbol) == 0) {
                 terminals.insert(symbol);
             }
         }
     }
     
-    // add end terminal
+    // Add the end marker used when the parser reaches the end of input.
     terminals.insert("$");
 }
         
 void Parser::addGrammarRule(const std::string& lhs, const std::vector<std::string>& rhs){
     Rule rule(lhs, rhs);
 
-    // Add to rule to grammarRules and add LHS to nonterminals
+    // Keep the rule in order because reduce actions refer to rules by index.
     grammarRules.push_back(rule);
     nonTerminals.insert(lhs);
 }
 
+// Builds the ACTION and GOTO tables used by the table-driven LR parser.
 void Parser::buildParsingTable(){
     actionTable[{0, TokenType::Class}] = Action(ActionType::SHIFT, 1);
     gotoTable[{0, "Program"}] = 2;
@@ -601,21 +605,21 @@ void Parser::buildParsingTable(){
 Action Parser::getAction(int state, TokenType type){
     std::pair<int, TokenType> key = {state, type};
 
-    // Check if input has a defined action
+    // Prefer a token-specific action when one exists for this state.
     if (actionTable.count(key)){
-    return actionTable[key];
+        return actionTable[key];
     }
 
-    // Check if state has a default action
+    // Default actions are mainly used for reductions that do not need more lookahead.
     if (defaultActions.count(state)){
-    return defaultActions[state];
+        return defaultActions[state];
     }
 
-    // Default error
     return Action(ActionType::ERROR, -1);
 }
 
-void Parser::parse() {
+// Runs the shift-reduce parsing loop and builds the parse tree as it goes.
+bool Parser::parse() {
     std::vector<int> stateStack;
     std::vector<ParseNode> nodeStack;
 
@@ -626,13 +630,14 @@ void Parser::parse() {
         int state = stateStack.back();
         TokenType tokenType = TokenType::EndOfInput;
 
-        // Check if token is not the last
+        // If all tokens have been consumed, treat the next symbol as EOF.
         if (tokenPosition < tokens.size()) {
             tokenType = tokens[tokenPosition].type;
         }
         Action action = getAction(state, tokenType);
 
         if (action.action == ActionType::SHIFT){
+            // Shift consumes one token and stores it as a leaf in the parse tree.
             stateStack.push_back(action.value);
             if (tokenPosition < tokens.size()) {
                 const Token& shiftedToken = tokens[tokenPosition];
@@ -644,7 +649,7 @@ void Parser::parse() {
         if (action.action == ActionType::REDUCE){
             Rule rule = grammarRules[action.value];
 
-            // Determine how many RHS symbols to reduce/pop
+            // Reduce collapses the RHS symbols into one parent node for the LHS.
             int rhsSize = rule.getRHS().size();
             std::vector<ParseNode> children;
             for (int i = 0; i < rhsSize; ++i){
@@ -653,11 +658,10 @@ void Parser::parse() {
                 nodeStack.pop_back();
             }
             
-            // Get currente state and lhs
+            // After popping, use the remaining state and LHS to find the next state.
             int currentState = stateStack.back();
             std::string lhs = rule.getLHS();
 
-            // Identify next state and add to stack
             int nextState = gotoTable[{currentState, lhs}];
             stateStack.push_back(nextState);
 
@@ -672,6 +676,7 @@ void Parser::parse() {
         }
 
         if (action.action == ActionType::ACCEPT){
+            // Accept means the whole token stream matched the grammar.
             std::cout << "Parse successful!" << std::endl;
             if (!nodeStack.empty()) {
                 std::cout << "Parse tree:" << std::endl;
@@ -680,15 +685,16 @@ void Parser::parse() {
                 std::ofstream outputFile("output.txt");
                 if (!outputFile) {
                     std::cerr << "[ERROR] Could not open output.txt for writing!" << std::endl;
-                    return;
+                    return false;
                 }
                 outputFile << "Parse tree:" << std::endl;
                 printTree(nodeStack.front(), outputFile);
             }
-            return;
+            return true;
         }
 
         if (action.action == ActionType::ERROR){
+            // Panic-mode recovery is not implemented, so the parser reports and stops.
             Token currentToken = {TokenType::EndOfInput, "EOF", -1, -1};
             if (tokenPosition < tokens.size()) {
                 currentToken = tokens[tokenPosition];
@@ -700,11 +706,12 @@ void Parser::parse() {
                     << ", column "
                     << currentToken.column
                     << std::endl;
-            return;
+            return false;
         }
     }
 }
 
+// Recursively prints the parse tree using indentation to show parent-child structure.
 void Parser::printTree(const ParseNode& node, std::ostream& out, int indent) const {
     out << std::string(indent, ' ') << node.name;
     if (!node.lexeme.empty()) {

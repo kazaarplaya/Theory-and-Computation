@@ -6,6 +6,7 @@
 #include <fstream>
 #include <sstream>
 
+// Reads the lexer output file and converts each line into a Token object.
 std::vector<Token> readTokensFromLexer(const std::string& filename){
     std::ifstream inputFile(filename);
     std::vector<Token> tokens; 
@@ -26,10 +27,7 @@ std::vector<Token> readTokensFromLexer(const std::string& filename){
 
         ss >> category; 
 
-        /*  
-        If token is an EOF Token, lexeme is set to "EOF".
-        If not, parse normally.  
-        */ 
+        // EOF lines do not include a normal lexeme, so one is added here.
         if (category == "EOF"){
             lexeme = "EOF";
             ss >> lineSection >> colSection;
@@ -52,18 +50,22 @@ std::vector<Token> readTokensFromLexer(const std::string& filename){
 
 int main(int argc, char* argv[]){
 
-    // Check number of line arguments
+    // The parser expects a lexer output file to be provided.
     if (argc < 2) {
         std::cerr << "Error: Missing input file name.\n";
         std::cerr << "Usage: " << argv[0] << " <filename>\n";
         return 1; 
     }
 
-    // Load file name and create tokens from input file
+    // Load the token stream from the lexer output.
     std::string filename = argv[1];
     std::vector<Token> tokens = readTokensFromLexer(filename);
 
-    // Feed tokens into parser and parse
+    // Run the parser and return a failure code if syntax analysis fails.
     Parser parser = Parser(tokens);
-    parser.parse();
+    if (!parser.parse()) {
+        return 1;
+    }
+
+    return 0;
 }

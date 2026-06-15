@@ -1,0 +1,75 @@
+Parse tree:
+Program
+  ClassDeclarationList
+    ClassDeclaration
+      CLASS (class)
+      IDENTIFIER (A)
+      LEFTBRACE ({)
+      MemberList
+        MemberDeclaration
+          Visibility
+            PUBLIC (public)
+          FunctionDeclaration
+            VOID (void)
+            IDENTIFIER (f)
+            LEFTPAREN (()
+            FunctionParameters
+              epsilon
+            RIGHPAREN ())
+            Block
+              LEFTBRACE ({)
+              StatementList
+                Statement
+                  IfStatement
+                    IF (if)
+                    LEFTPAREN (()
+                    Expression
+                      AdditiveExpression
+                        Term
+                          Factor
+                            INTEGER (1)
+                          TermTail
+                            epsilon
+                        AdditiveTail
+                          epsilon
+                    RIGHPAREN ())
+                    Block
+                      LEFTBRACE ({)
+                      StatementList
+                        Statement
+                          IfStatement
+                            IF (if)
+                            LEFTPAREN (()
+                            Expression
+                              AdditiveExpression
+                                Term
+                                  Factor
+                                    INTEGER (2)
+                                  TermTail
+                                    epsilon
+                                AdditiveTail
+                                  epsilon
+                            RIGHPAREN ())
+                            Block
+                              LEFTBRACE ({)
+                              StatementList
+                                epsilon
+                              RIGHTBRACE (})
+                            ELSE (else)
+                            Block
+                              LEFTBRACE ({)
+                              StatementList
+                                epsilon
+                              RIGHTBRACE (})
+                        StatementList
+                          epsilon
+                      RIGHTBRACE (})
+                StatementList
+                  epsilon
+              RIGHTBRACE (})
+        MemberList
+          epsilon
+      RIGHTBRACE (})
+      SEMICOLON (;)
+    ClassDeclarationList
+      epsilon
