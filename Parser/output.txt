@@ -1,0 +1,13 @@
+Parse tree:
+Program
+  ClassDeclarationList
+    ClassDeclaration
+      CLASS (class)
+      IDENTIFIER (A)
+      LEFTBRACE ({)
+      MemberList
+        epsilon
+      RIGHTBRACE (})
+      SEMICOLON (;)
+    ClassDeclarationList
+      epsilon

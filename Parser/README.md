@@ -28,6 +28,12 @@ Test input files are stored in:
 tests/inputs/
 ```
 
+Grammar and Bison-related files are stored in:
+
+```text
+grammar/
+```
+
 ## Run On macOS / Linux
 
 Build and run with one command:
