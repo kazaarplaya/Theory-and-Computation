@@ -11,6 +11,10 @@ KEYWORD      public               line=3    column=5
 KEYWORD      char                 line=3    column=12  
 IDENTIFIER   name                 line=3    column=17  
 DELIMITER    ;                    line=3    column=21  
-DELIMITER    }                    line=4    column=1   
-DELIMITER    ;                    line=4    column=2   
-EOF                               line=4    column=3   
+IDENTIFIER   x                    line=4    column=5   
+OPERATOR     +                    line=4    column=6   
+OPERATOR     +                    line=4    column=7   
+DELIMITER    ;                    line=4    column=8   
+DELIMITER    }                    line=5    column=1   
+DELIMITER    ;                    line=5    column=2   
+EOF                               line=5    column=3   
